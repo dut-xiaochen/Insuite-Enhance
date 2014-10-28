@@ -25,6 +25,10 @@ my $query = Apache::Request->new( $r, TEMP_DIR => "$session->{temp_dir}" );
 DA::Valid::check_param_all( $session, $query );
 my $random = rand(100000);
 my $head_print = &print_head;
+my $conf_file = DA::IS::get_sys_custom($session,"addon/TAG/tag_addon");
+my $groups_script = DA::Addon::TAG::TPermission::get_group($session,$conf_file);
+my $depId = $query->param("depId");
+
 my @include_js = ();
     push @include_js,
         qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>|,
@@ -38,6 +42,26 @@ my $outbuf =<<buff_end;
 $head_print
 @include_js
 <body>
+<script type="text/javascript">
+    var depIdsFromReq = "$depId";
+    var global_group = tag.global_groups;
+    var tmpDepName = "";
+    if( depIdsFromReq ) {
+        for (int i = 0 ; i < global_groups.length ; i++) {
+            var global_group = global_groups[i];
+            if(depIdsFromReq.indexOf(global_group[6])){
+                deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+            }
+        }
+    } else {
+        for (int i = 0 ; i < global_groups.length ; i++) {
+            var global_group = global_groups[i];
+            deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+        }
+    }
+    init();
+</script>
+
 <h2><span id="nextYearTitle"></span>@{[t_('営業年度計画一覧（部門別）')]}</h2>
 <input type="hidden" id="list_cnt" value="10">
 <table class="title_list" cellpadding="0" cellspacing="0">
