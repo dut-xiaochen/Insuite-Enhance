@@ -36,16 +36,15 @@ function renderDepList(depId, year) {
     customsData = [];
     jQuery("[name='currentYearArea']").text(nextYear);
     jQuery("[name='lastYearArea']").text(currentYear);
-    tag.doget("/hibiki/rest/1/binders/10065/views/10001/documents?charge_group=" + depId, function(err, result){
+    tag.doget("/hibiki/rest/1/binders/custom_charge_group_master/views/allData/documents?charge_group=" + depId, function(err, result){
         if(err){
             jQuery("#message_comment").text(err);
         } else {
             result = tag.objToArray(result);
             _.each(result.document, function(customerItem, index) {
-                if(customerItem.item[1].value === "true"){
+                if(customerItem.item[3].value === "1"){
                     customsData.push(customerItem.item[0].value);
                     eval("documentsData['" + depItem.item[1].value + "_Data']={};");
-                    eval("documentsData['" + depItem.item[1].value + "_Data']['isForCount'] = " + customerItem.item[1].value + ";");
                 }
             });
                               
@@ -64,7 +63,6 @@ function renderDepList(depId, year) {
                         var currentYearProfitAB = 0;
                         var currentYearSalesABC = 0;
                         var currentYearProfitABC = 0;
-                        var isForCount = "true";
                         result = tag.objToArray(result);
                         _.each(result.document, function(depItem, index) {
                             var strategy = tag.createStrategy(depItem);
@@ -86,7 +84,6 @@ function renderDepList(depId, year) {
                                     currentYearProfitAB  = parseInt(tmpData["currentYearProfitAB"]);
                                     currentYearSalesABC  = parseInt(tmpData["currentYearSalesABC"]);
                                     currentYearProfitABC = parseInt(tmpData["currentYearProfitABC"]);
-                                    isForCount           = tmpData["isForCount"];
                                 } else {
                                     currentYearSalesA    = 0;
                                     currentYearProfitA   = 0;
@@ -98,7 +95,6 @@ function renderDepList(depId, year) {
                                     currentYearProfitAB  = 0;
                                     currentYearSalesABC  = 0;
                                     currentYearProfitABC = 0;
-                                    isForCount           = tmpData["isForCount"];
                                 }
                                 if(strategy["accurcy"] == "A"){
                                     currentYearSalesA += parseInt(strategy["sales"]);
@@ -131,7 +127,6 @@ function renderDepList(depId, year) {
                                 tmpSaveData["currentYearProfitAB"]  = currentYearProfitAB;
                                 tmpSaveData["currentYearSalesABC"]  = currentYearSalesABC;
                                 tmpSaveData["currentYearProfitABC"] = currentYearProfitABC;
-                                tmpSaveData["isForCount"]           = isForCount;
                                 eval("documentsData['" + depItem.item[1].value + "_Data'] = tmpSaveData;");
                             }
                         });
