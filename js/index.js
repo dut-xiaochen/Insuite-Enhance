@@ -37,94 +37,109 @@ function renderDepList(depId, year) {
     jQuery("[name='currentYearArea']").text(nextYear);
     jQuery("[name='lastYearArea']").text(currentYear);
     tag.doget("/hibiki/rest/1/binders/10065/views/10001/documents?charge_group=" + depId, function(err, result){
-        tag.doget("/hibiki/rest/1/binders/strategy_management/views/10001/documents?charge_group=" + depId + "&year=" + year,function(err, result){
-            if (err) {
-                jQuery("#message_comment").text(err);
-            } else {
-                if(result.document){
-                    var currentYearSalesA = 0;
-                    var currentYearProfitA = 0;
-                    var currentYearSalesB = 0;
-                    var currentYearProfitB = 0;
-                    var currentYearSalesC = 0;
-                    var currentYearProfitC = 0;
-                    var currentYearSalesAB = 0;
-                    var currentYearProfitAB = 0;
-                    var currentYearSalesABC = 0;
-                    var currentYearProfitABC = 0;
-                    result = tag.objToArray(result);
-                    _.each(result.document, function(depItem, index) {
-                        var strategy = tag.createStrategy(depItem);
-                        if ( !eval("documentsData['" + depItem.item[1].value + "_Data']") ) {
-                            eval("documentsData['" + depItem.item[1].value + "_Data']={};");
-                            customsData.push(depItem.item[1].value);
-                        }
-                        var tmpData = {};
-                        tmpData = eval("documentsData['" + depItem.item[1].value + "_Data']");
-                        if ( typeof(tmpData) === "undefined" ) {
-                            tmpData = {};
-                        }
-                        //　当年度　A合計
-                        if(typeof(tmpData["currentYearSalesA"]) !== "undefined"){
-                            currentYearSalesA    = parseInt(tmpData["currentYearSalesA"]);
-                            currentYearProfitA   = parseInt(tmpData["currentYearProfitA"]);
-                            currentYearSalesB    = parseInt(tmpData["currentYearSalesB"]);
-                            currentYearProfitB   = parseInt(tmpData["currentYearProfitB"]);
-                            currentYearSalesC    = parseInt(tmpData["currentYearSalesC"]);
-                            currentYearProfitC   = parseInt(tmpData["currentYearProfitC"]);
-                            currentYearSalesAB   = parseInt(tmpData["currentYearSalesAB"]);
-                            currentYearProfitAB  = parseInt(tmpData["currentYearProfitAB"]);
-                            currentYearSalesABC  = parseInt(tmpData["currentYearSalesABC"]);
-                            currentYearProfitABC = parseInt(tmpData["currentYearProfitABC"]);
-                        } else {
-                            currentYearSalesA    = 0;
-                            currentYearProfitA   = 0;
-                            currentYearSalesB    = 0;
-                            currentYearProfitB   = 0;
-                            currentYearSalesC    = 0;
-                            currentYearProfitC   = 0;
-                            currentYearSalesAB   = 0;
-                            currentYearProfitAB  = 0;
-                            currentYearSalesABC  = 0;
-                            currentYearProfitABC = 0;
-                        }
-                        if(strategy["accurcy"] == "A"){
-                            currentYearSalesA += parseInt(strategy["sales"]);
-                            currentYearProfitA += parseInt(strategy["profit"]);
-                        }
-                        //　当年度　B合計
-                        if(strategy["accurcy"] == "B"){
-                            currentYearSalesB += parseInt(strategy["sales"]);
-                            currentYearProfitB += parseInt(strategy["profit"]);
-                        }
-                        //　当年度　C合計
-                        if(strategy["accurcy"] == "C"){
-                            currentYearSalesC += parseInt(strategy["sales"]);
-                            currentYearProfitC += parseInt(strategy["profit"]);
-                        }
-                        // 当年度　A＋B合計【見込み】
-                        currentYearSalesAB = currentYearSalesA + currentYearSalesB;
-                        currentYearProfitAB = currentYearProfitA + currentYearProfitB;
-                        //　当年度　A+B+C合計【目標】
-                        currentYearSalesABC = currentYearSalesA + currentYearSalesB + currentYearSalesC;
-                        currentYearProfitABC = currentYearProfitA + currentYearProfitB + currentYearProfitC;
-                        var tmpSaveData = {};
-                        tmpSaveData["currentYearSalesA"]    = currentYearSalesA;
-                        tmpSaveData["currentYearProfitA"]   = currentYearProfitA;
-                        tmpSaveData["currentYearSalesB"]    = currentYearSalesB;
-                        tmpSaveData["currentYearProfitB"]   = currentYearProfitB;
-                        tmpSaveData["currentYearSalesC"]    = currentYearSalesC;
-                        tmpSaveData["currentYearProfitC"]   = currentYearProfitC;
-                        tmpSaveData["currentYearSalesAB"]   = currentYearSalesAB;
-                        tmpSaveData["currentYearProfitAB"]  = currentYearProfitAB;
-                        tmpSaveData["currentYearSalesABC"]  = currentYearSalesABC;
-                        tmpSaveData["currentYearProfitABC"] = currentYearProfitABC;
-                        eval("documentsData['" + depItem.item[1].value + "_Data'] = tmpSaveData;");
-                    });
-                    getLastYearData(year, documentsData, customsData, depId);
+        if(err){
+            jQuery("#message_comment").text(err);
+        } else {
+            result = tag.objToArray(result);
+            _.each(result.document, function(customerItem, index) {
+                if(customerItem.item[1].value === "true"){
+                    customsData.push(customerItem.item[0].value);
+                    eval("documentsData['" + depItem.item[1].value + "_Data']={};");
+                    eval("documentsData['" + depItem.item[1].value + "_Data']['isForCount'] = " + customerItem.item[1].value + ";");
                 }
-            }
-        });
+            });
+                              
+            tag.doget("/hibiki/rest/1/binders/strategy_management/views/10001/documents?charge_group=" + depId + "&year=" + year,function(err, result){
+                if (err) {
+                    jQuery("#message_comment").text(err);
+                } else {
+                    if(result.document){
+                        var currentYearSalesA = 0;
+                        var currentYearProfitA = 0;
+                        var currentYearSalesB = 0;
+                        var currentYearProfitB = 0;
+                        var currentYearSalesC = 0;
+                        var currentYearProfitC = 0;
+                        var currentYearSalesAB = 0;
+                        var currentYearProfitAB = 0;
+                        var currentYearSalesABC = 0;
+                        var currentYearProfitABC = 0;
+                        var isForCount = "true";
+                        result = tag.objToArray(result);
+                        _.each(result.document, function(depItem, index) {
+                            var strategy = tag.createStrategy(depItem);
+                            if ( eval("typeof(documentsData['" + depItem.item[1].value + "_Data']) !== 'undefined'") ) {
+                                var tmpData = {};
+                                tmpData = eval("documentsData['" + depItem.item[1].value + "_Data']");
+                                if ( typeof(tmpData) === "undefined" ) {
+                                    tmpData = {};
+                                }
+                                //　当年度　A合計
+                                if(typeof(tmpData["currentYearSalesA"]) !== "undefined"){
+                                    currentYearSalesA    = parseInt(tmpData["currentYearSalesA"]);
+                                    currentYearProfitA   = parseInt(tmpData["currentYearProfitA"]);
+                                    currentYearSalesB    = parseInt(tmpData["currentYearSalesB"]);
+                                    currentYearProfitB   = parseInt(tmpData["currentYearProfitB"]);
+                                    currentYearSalesC    = parseInt(tmpData["currentYearSalesC"]);
+                                    currentYearProfitC   = parseInt(tmpData["currentYearProfitC"]);
+                                    currentYearSalesAB   = parseInt(tmpData["currentYearSalesAB"]);
+                                    currentYearProfitAB  = parseInt(tmpData["currentYearProfitAB"]);
+                                    currentYearSalesABC  = parseInt(tmpData["currentYearSalesABC"]);
+                                    currentYearProfitABC = parseInt(tmpData["currentYearProfitABC"]);
+                                    isForCount           = tmpData["isForCount"];
+                                } else {
+                                    currentYearSalesA    = 0;
+                                    currentYearProfitA   = 0;
+                                    currentYearSalesB    = 0;
+                                    currentYearProfitB   = 0;
+                                    currentYearSalesC    = 0;
+                                    currentYearProfitC   = 0;
+                                    currentYearSalesAB   = 0;
+                                    currentYearProfitAB  = 0;
+                                    currentYearSalesABC  = 0;
+                                    currentYearProfitABC = 0;
+                                    isForCount           = tmpData["isForCount"];
+                                }
+                                if(strategy["accurcy"] == "A"){
+                                    currentYearSalesA += parseInt(strategy["sales"]);
+                                    currentYearProfitA += parseInt(strategy["profit"]);
+                                }
+                                //　当年度　B合計
+                                if(strategy["accurcy"] == "B"){
+                                    currentYearSalesB += parseInt(strategy["sales"]);
+                                    currentYearProfitB += parseInt(strategy["profit"]);
+                                }
+                                //　当年度　C合計
+                                if(strategy["accurcy"] == "C"){
+                                    currentYearSalesC += parseInt(strategy["sales"]);
+                                    currentYearProfitC += parseInt(strategy["profit"]);
+                                }
+                                // 当年度　A＋B合計【見込み】
+                                currentYearSalesAB = currentYearSalesA + currentYearSalesB;
+                                currentYearProfitAB = currentYearProfitA + currentYearProfitB;
+                                //　当年度　A+B+C合計【目標】
+                                currentYearSalesABC = currentYearSalesA + currentYearSalesB + currentYearSalesC;
+                                currentYearProfitABC = currentYearProfitA + currentYearProfitB + currentYearProfitC;
+                                var tmpSaveData = {};
+                                tmpSaveData["currentYearSalesA"]    = currentYearSalesA;
+                                tmpSaveData["currentYearProfitA"]   = currentYearProfitA;
+                                tmpSaveData["currentYearSalesB"]    = currentYearSalesB;
+                                tmpSaveData["currentYearProfitB"]   = currentYearProfitB;
+                                tmpSaveData["currentYearSalesC"]    = currentYearSalesC;
+                                tmpSaveData["currentYearProfitC"]   = currentYearProfitC;
+                                tmpSaveData["currentYearSalesAB"]   = currentYearSalesAB;
+                                tmpSaveData["currentYearProfitAB"]  = currentYearProfitAB;
+                                tmpSaveData["currentYearSalesABC"]  = currentYearSalesABC;
+                                tmpSaveData["currentYearProfitABC"] = currentYearProfitABC;
+                                tmpSaveData["isForCount"]           = isForCount;
+                                eval("documentsData['" + depItem.item[1].value + "_Data'] = tmpSaveData;");
+                            }
+                        });
+                        getLastYearData(year, documentsData, customsData, depId);
+                    }
+                }
+            });
+        }
     });
 }
 
@@ -213,6 +228,7 @@ function getCustomName(year, documentsData, customsData, depId) {
         if (err) {
             jQuery("#message_comment").text(err);
         } else {
+            result = tag.objToArray(result);
             if(result.document){
                 var documents = result.document;
                 for ( var i = 0 ; i < documents.length ; i++ ) {
@@ -381,7 +397,7 @@ function renderPage(year, documentsData, customsData, depId) {
 
 function isDocumentsDataExists (documentsData, customCode) {
     var result;
-    eval('result = documentsData["' + customCode+ '_Data"];');
+    eval('result = documentsData["' + customCode+ '_Data"]["currentYearSalesA"];');
     if (typeof(result) == "undefined") {
         return false;
     } else {
@@ -393,7 +409,7 @@ function getButtonScripts (documentsData, customCode) {
     var result;
     var scripts = "";
     var customName = "";
-    eval('result = documentsData["' + customCode+ '_Data"];');
+    eval('result = documentsData["' + customCode+ '_Data"]["currentYearSalesA"];');
     if (typeof(result) == "undefined") {
         scripts += "submitOngoingForm('" + customCode + "', ";
         eval('customName = documentsData["' + customCode + '_Data"]["customName"];');
