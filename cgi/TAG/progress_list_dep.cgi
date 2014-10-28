@@ -224,15 +224,15 @@ jQuery(function () {
 <div id="ongoing_year" name="year" type="hidden" value=""></div>
 <div id="ongoing_depId" name="depId" type="hidden" value=""></div>
 <div id="ongoing_depName" name="depName" type="hidden" value=""></div>
-<div id="ongoing_custom_code" name="custom_code" type="hidden" value=""></div>
-<div id="ongoing_custom_name" name="custom_name" type="hidden" value=""></div>
+<div id="ongoing_custom_code" name="customer_code" type="hidden" value=""></div>
+<div id="ongoing_custom_name" name="customer_name" type="hidden" value=""></div>
 </form>
 <form action="plan.cgi" name="plan" method="post">
 <div id="plan_year" name="year" type="hidden" value=""></div>
 <div id="plan_depId" name="depId" type="hidden" value=""></div>
 <div id="plan_depName" name="depName" type="hidden" value=""></div>
-<div id="plan_custom_code" name="custom_code" type="hidden" value=""></div>
-<div id="plan_custom_name" name="custom_name" type="hidden" value=""></div>
+<div id="plan_custom_code" name="customer_code" type="hidden" value=""></div>
+<div id="plan_custom_name" name="customer_name" type="hidden" value=""></div>
 </form>
 </body>
 </html>
