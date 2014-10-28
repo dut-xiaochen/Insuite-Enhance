@@ -10,6 +10,7 @@ BEGIN {
 	use DA::IS;
 	use DA::Vars;
 	use Data::Dumper;
+    use DA::Addon::TAG::TPermission;
 }
 use strict;
 &main();
@@ -43,23 +44,25 @@ $head_print
 @include_js
 <body>
 <script type="text/javascript">
+jQuery(function () {
     var depIdsFromReq = "$depId";
-    var global_group = tag.global_groups;
+    var global_groups = tag.global_groups;
     var tmpDepName = "";
-    if( depIdsFromReq ) {
-        for (int i = 0 ; i < global_groups.length ; i++) {
+    if( depIdsFromReq === "") {
+        for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];
             if(depIdsFromReq.indexOf(global_group[6])){
                 deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
             }
         }
     } else {
-        for (int i = 0 ; i < global_groups.length ; i++) {
+        for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];
             deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
         }
     }
     init();
+});
 </script>
 
 <h2><span id="nextYearTitle"></span>@{[t_('営業年度計画一覧（部門別）')]}</h2>
@@ -240,7 +243,7 @@ my $head = <<buff_end;
 <meta http-equiv="Expires" content="0">
 <meta http-equiv="Cache-Control" content="no-cache">
 <link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/style_tag.css">
-<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/normal_style.css.css">
+<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/UTF-8/normal_style.css">
 
 <STYLE type="text/css"><!--
     input,textarea { ime-mode: active }

@@ -1,15 +1,11 @@
-jQuery(function () {
-    init();
-});
+var deptName = [];
 var currentYear = "2014";
 var nextYear = "2015";
 
 function getDeptCode() {
-    var deptName = [];
-    deptName.push({"name":"営業統括本部 第１営業局","code":"1000000"});
-    deptName.push({"name":"営業統括本部 第２営業局","code":"2000037"});
     return deptName;
 }
+
 function init() {
     var targetDept = getDeptCode();
     render(targetDept);
