@@ -42,7 +42,7 @@ function renderDepList(depId, year) {
         } else {
             result = tag.objToArray(result);
             _.each(result.document, function(customerItem, index) {
-                if(customerItem.item[3].value === "1"){
+                if(customerItem.item[3].value === "0"){
                     customsData.push(customerItem.item[0].value);
                     eval("documentsData['" + depItem.item[1].value + "_Data']={};");
                 }
