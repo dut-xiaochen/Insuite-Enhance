@@ -43,6 +43,7 @@ my $outbuf =<<buff_end;
 $head_print
 @include_js
 <body>
+<script type="text/javascript">$groups_script</script>
 <script type="text/javascript">
 jQuery(function () {
     var depIdsFromReq = "$depId";
@@ -58,7 +59,9 @@ jQuery(function () {
     } else {
         for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];
-            deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+            if(depIdsFromReq.indexOf(global_group[6]) !== -1){
+                deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+            }
         }
     }
     init();
@@ -181,24 +184,24 @@ jQuery(function () {
                 <td id="number_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;">{{id}}</td>
                 <td id="chketc_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=checkbox id="chkbox_{{id}}" disabled="true"></td>
                 <td id="client_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:left;">{{deptName}}</td>
-                <td id="yrplan_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button value="{{buttonTyoe}}" disabled="true" onclick=""></td>
-                <td id="action_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button value="{{buttonType}}" onclick="{{buttonClick}}"></td>
-                <td id="data01_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{currentYearSalesA}}</td>
-                <td id="data02_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{currentYearProfitA}}</td>
-                <td id="data03_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{currentYearSalesB}}</td>
-                <td id="data04_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{currentYearProfitB}}</td>
-                <td id="data05_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color1" >{{currentYearSalesAB}}</td>
-                <td id="data06_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color1" >{{currentYearProfitAB}}</td>
-                <td id="data07_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color2" >{{lastYearSales}}</td>
-                <td id="data08_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color2" >{{lastYearProfit}}</td>
-                <td id="data09_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{increaseSales1}}</td>
-                <td id="data10_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{increaseProfit1}}</td>
-                <td id="data11_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color3" >{{lastYearBudgetSales}}</td>
-                <td id="data12_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color3" >{{lastYearBudgetProfit}}</td>
-                <td id="data13_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{increaseSales2}}</td>
-                <td id="data14_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;">{{increaseProfit2}}</td>
-                <td id="data15_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color4" >{{currentYearSalesABC}}</td>
-                <td id="data16_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color4" >{{currentYearProfitABC}}</td>
+                <td id="yrplan_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button value="{{buttonType}}" onclick='{{buttonClick}}'></td>
+                <td id="action_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button value="{{buttonType}}" disabled="true" onclick=""></td>
+                <td id="data01_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{currentYearSalesA_color}}">{{currentYearSalesA}}</font></td>
+                <td id="data02_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{currentYearProfitA_color}}">{{currentYearProfitA}}</font></td>
+                <td id="data03_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{currentYearSalesB_color}}">{{currentYearSalesB}}</font></td>
+                <td id="data04_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{currentYearProfitB_color}}">{{currentYearProfitB}}</font></td>
+                <td id="data05_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color1" ><font color="{{currentYearSalesAB_color}}">{{currentYearSalesAB}}</font></td>
+                <td id="data06_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color1" ><font color="{{currentYearProfitAB_color}}">{{currentYearProfitAB}}</font></td>
+                <td id="data07_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color2" ><font color="{{lastYearSales_color}}">{{lastYearSales}}</font></td>
+                <td id="data08_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color2" ><font color="{{lastYearProfit_color}}">{{lastYearProfit}}</font></td>
+                <td id="data09_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{increaseSales1_color}}">{{increaseSales1}}</font></td>
+                <td id="data10_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{increaseProfit1_color}}">{{increaseProfit1}}</font></td>
+                <td id="data11_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color3" ><font color="{{lastYearBudgetSales_color}}">{{lastYearBudgetSales}}</font></td>
+                <td id="data12_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color3" ><font color="{{lastYearBudgetProfit_color}}">{{lastYearBudgetProfit}}</font></td>
+                <td id="data13_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{increaseSales2_color}}">{{increaseSales2}}</font></td>
+                <td id="data14_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{increaseProfit2_color}}">{{increaseProfit2}}</font></td>
+                <td id="data15_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color4" ><font color="{{currentYearSalesABC_color}}">{{currentYearSalesABC}}</font></td>
+                <td id="data16_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;" class="backgroud_color4" ><font color="{{currentYearProfitABC_color}}">{{currentYearProfitABC}}</font></td>
             </tr>
         </script>
 </table>
@@ -223,6 +226,13 @@ jQuery(function () {
 <div id="ongoing_depName" name="depName" type="hidden" value=""></div>
 <div id="ongoing_custom_code" name="custom_code" type="hidden" value=""></div>
 <div id="ongoing_custom_name" name="custom_name" type="hidden" value=""></div>
+</form>
+<form action="plan.cgi" name="plan" method="post">
+<div id="plan_year" name="year" type="hidden" value=""></div>
+<div id="plan_depId" name="depId" type="hidden" value=""></div>
+<div id="plan_depName" name="depName" type="hidden" value=""></div>
+<div id="plan_custom_code" name="custom_code" type="hidden" value=""></div>
+<div id="plan_custom_name" name="custom_name" type="hidden" value=""></div>
 </form>
 </body>
 </html>

@@ -51,15 +51,15 @@ function renderDepList(depId, year) {
                 var currentYearProfitAB = 0;
                 var currentYearSalesABC = 0;
                 var currentYearProfitABC = 0;
-                
+                result = tag.objToArray(result);
                 _.each(result.document, function(depItem, index) {
                     var strategy = tag.createStrategy(depItem);
-                    if ( !eval("documentsData['" + depItem.item[0].value + "_Data']") ) {
-                        eval("documentsData['" + depItem.item[0].value + "_Data']={};");
-                        customsData.push(depItem.item[0].value);
+                    if ( !eval("documentsData['" + depItem.item[1].value + "_Data']") ) {
+                        eval("documentsData['" + depItem.item[1].value + "_Data']={};");
+                        customsData.push(depItem.item[1].value);
                     }
                     var tmpData = {};
-                    tmpData = eval("documentsData['" + depItem.item[0].value + "_Data']");
+                    tmpData = eval("documentsData['" + depItem.item[1].value + "_Data']");
                     if ( typeof(tmpData) === "undefined" ) {
                         tmpData = {};
                     }
@@ -118,7 +118,7 @@ function renderDepList(depId, year) {
                     tmpSaveData["currentYearProfitAB"]  = currentYearProfitAB;
                     tmpSaveData["currentYearSalesABC"]  = currentYearSalesABC;
                     tmpSaveData["currentYearProfitABC"] = currentYearProfitABC;
-                    eval("documentsData['" + depItem.item[0].value + "_Data'] = tmpSaveData;");
+                    eval("documentsData['" + depItem.item[1].value + "_Data'] = tmpSaveData;");
                 });
                 getLastYearData(year, documentsData, customsData, depId);
             }
@@ -136,10 +136,10 @@ function getLastYearData(year, documentsData, customsData, depId) {
                 var lastYearProfit = 0;
                 var increaseSales1 = 0;
                 var increaseProfit1 = 0;
-                
+                result = tag.objToArray(result);
                 _.each(result.document, function(depItem, index) {
                     var tmpData = {};
-                    tmpData = eval("documentsData['" + depItem.item[0].value + "_Data']");
+                    tmpData = eval("documentsData['" + depItem.item[1].value + "_Data']");
                     if ( typeof(tmpData) === "undefined" ) {
                         tmpData = {};
                     }
@@ -158,7 +158,7 @@ function getLastYearData(year, documentsData, customsData, depId) {
                     tmpData["lastYearProfit"]  = lastYearProfit;
                     tmpData["increaseSales1"]  = parseInt(tmpData["currentYearSalesAB"]) - lastYearSales;
                     tmpData["increaseProfit1"] = parseInt(tmpData["currentYearProfitAB"]) - lastYearProfit;
-                    eval("documentsData['" + depItem.item[0].value + "_Data'] = tmpData;");
+                    eval("documentsData['" + depItem.item[1].value + "_Data'] = tmpData;");
                 });
             }
             getBudget(year, documentsData, customsData, depId);
@@ -175,6 +175,7 @@ function getBudget(year, documentsData, customsData, depId){
             if(result.document){
                 var lastYearBudgetSales  = 0;
                 var lastYearBudgetProfit = 0;
+                result = tag.objToArray(result);
                 _.each(result.document, function(depItem, index) {
                     var tmpData = {};
                     tmpData = eval("documentsData['" + depItem.item[8].value + "_Data']");
@@ -318,22 +319,22 @@ function renderPage(year, documentsData, customsData, depId) {
             increaseSales2:tag.addCommas(increaseSales2),
             increaseProfit1:tag.addCommas(increaseProfit1),
             increaseProfit2:tag.addCommas(increaseProfit2),
-            currentYearSalesA_color:currentYearSalesA > 0 ? "black" : "red",
-            currentYearProfitA_color:currentYearProfitA > 0 ? "black" : "red",
-            currentYearSalesB_color:currentYearSalesB > 0 ? "black" : "red",
-            currentYearProfitB_color:currentYearProfitB > 0 ? "black" : "red",
-            currentYearSalesAB_color:currentYearSalesAB > 0 ? "black" : "red",
-            currentYearProfitAB_color:currentYearProfitAB > 0 ? "black" : "red",
-            currentYearSalesABC_color:currentYearSalesABC > 0 ? "black" : "red",
-            currentYearProfitABC_color:currentYearProfitABC > 0 ? "black" : "red",
-            lastYearSales_color:lastYearSales > 0 ? "black" : "red",
-            lastYearProfit_color:lastYearProfit > 0 ? "black" : "red",
-            lastYearBudgetSales_color:lastYearBudgetSales > 0 ? "black" : "red",
-            lastYearBudgetProfit_color:lastYearBudgetProfit > 0 ? "black" : "red",
-            increaseSales1_color:increaseSales1 > 0 ? "black" : "red",
-            increaseProfit1_color:increaseProfit1 > 0 ? "black" : "red",
-            increaseSales2_color:increaseSales2 > 0 ? "black" : "red",
-            increaseProfit2_color:increaseProfit2 > 0 ? "black" : "red",
+            currentYearSalesA_color:currentYearSalesA >= 0 ? "black" : "red",
+            currentYearProfitA_color:currentYearProfitA >= 0 ? "black" : "red",
+            currentYearSalesB_color:currentYearSalesB >= 0 ? "black" : "red",
+            currentYearProfitB_color:currentYearProfitB >= 0 ? "black" : "red",
+            currentYearSalesAB_color:currentYearSalesAB >= 0 ? "black" : "red",
+            currentYearProfitAB_color:currentYearProfitAB >= 0 ? "black" : "red",
+            currentYearSalesABC_color:currentYearSalesABC >= 0 ? "black" : "red",
+            currentYearProfitABC_color:currentYearProfitABC >= 0 ? "black" : "red",
+            lastYearSales_color:lastYearSales >= 0 ? "black" : "red",
+            lastYearProfit_color:lastYearProfit >= 0 ? "black" : "red",
+            lastYearBudgetSales_color:lastYearBudgetSales >= 0 ? "black" : "red",
+            lastYearBudgetProfit_color:lastYearBudgetProfit >= 0 ? "black" : "red",
+            increaseSales1_color:increaseSales1 >= 0 ? "black" : "red",
+            increaseProfit1_color:increaseProfit1 >= 0 ? "black" : "red",
+            increaseSales2_color:increaseSales2 >= 0 ? "black" : "red",
+            increaseProfit2_color:increaseProfit2 >= 0 ? "black" : "red",
             buttonType:isDocumentsDataExists(documentsData, customsData[i]) ? "編集" : "作成",
             buttonClick:getButtonScripts(documentsData, customsData[i])
         });
@@ -356,22 +357,22 @@ function renderPage(year, documentsData, customsData, depId) {
     sumObj.sum_increaseProfit1 = tag.addCommas(sum_increaseProfit1);
     sumObj.sum_increaseSales2 = tag.addCommas(sum_increaseSales2);
     sumObj.sum_increaseProfit2 = tag.addCommas(sum_increaseProfit2);
-    sumObj.sum_currentYearSalesA_color = sum_currentYearSalesA > 0 ? "black" : "red";
-    sumObj.sum_currentYearProfitA_color = sum_currentYearProfitA > 0 ? "black" : "red";
-    sumObj.sum_currentYearSalesB_color = sum_currentYearSalesB > 0 ? "black" : "red";
-    sumObj.sum_currentYearProfitB_color = sum_currentYearProfitB > 0 ? "black" : "red";
-    sumObj.sum_currentYearSalesAB_color = sum_currentYearSalesAB > 0 ? "black" : "red";
-    sumObj.sum_currentYearProfitAB_color = sum_currentYearProfitAB > 0 ? "black" : "red";
-    sumObj.sum_currentYearSalesABC_color = sum_currentYearSalesABC > 0 ? "black" : "red";
-    sumObj.sum_currentYearProfitABC_color = sum_currentYearProfitABC > 0 ? "black" : "red";
-    sumObj.sum_lastYearSales_color = sum_lastYearSales > 0 ? "black" : "red";
-    sumObj.sum_lastYearProfit_color = sum_lastYearProfit > 0 ? "black" : "red";
-    sumObj.sum_lastYearBudgetSales_color = sum_lastYearBudgetSales > 0 ? "black" : "red";
-    sumObj.sum_lastYearBudgetProfit_color = sum_lastYearBudgetProfit > 0 ? "black" : "red";
-    sumObj.sum_increaseSales1_color = sum_increaseSales1 > 0 ? "black" : "red";
-    sumObj.sum_increaseProfit1_color = sum_increaseProfit1 > 0 ? "black" : "red";
-    sumObj.sum_increaseSales2_color = sum_increaseSales2 > 0 ? "black" : "red";
-    sumObj.sum_increaseProfit2_color = sum_increaseProfit2 > 0 ? "black" : "red";
+    sumObj.sum_currentYearSalesA_color = sum_currentYearSalesA >= 0 ? "black" : "red";
+    sumObj.sum_currentYearProfitA_color = sum_currentYearProfitA >= 0 ? "black" : "red";
+    sumObj.sum_currentYearSalesB_color = sum_currentYearSalesB >= 0 ? "black" : "red";
+    sumObj.sum_currentYearProfitB_color = sum_currentYearProfitB >= 0 ? "black" : "red";
+    sumObj.sum_currentYearSalesAB_color = sum_currentYearSalesAB >= 0 ? "black" : "red";
+    sumObj.sum_currentYearProfitAB_color = sum_currentYearProfitAB >= 0 ? "black" : "red";
+    sumObj.sum_currentYearSalesABC_color = sum_currentYearSalesABC >= 0 ? "black" : "red";
+    sumObj.sum_currentYearProfitABC_color = sum_currentYearProfitABC >= 0 ? "black" : "red";
+    sumObj.sum_lastYearSales_color = sum_lastYearSales >= 0 ? "black" : "red";
+    sumObj.sum_lastYearProfit_color = sum_lastYearProfit >= 0 ? "black" : "red";
+    sumObj.sum_lastYearBudgetSales_color = sum_lastYearBudgetSales >= 0 ? "black" : "red";
+    sumObj.sum_lastYearBudgetProfit_color = sum_lastYearBudgetProfit >= 0 ? "black" : "red";
+    sumObj.sum_increaseSales1_color = sum_increaseSales1 >= 0 ? "black" : "red";
+    sumObj.sum_increaseProfit1_color = sum_increaseProfit1 >= 0 ? "black" : "red";
+    sumObj.sum_increaseSales2_color = sum_increaseSales2 >= 0 ? "black" : "red";
+    sumObj.sum_increaseProfit2_color = sum_increaseProfit2 >= 0 ? "black" : "red";
     
     renderSumTempl(sumObj);
 }
@@ -388,20 +389,19 @@ function isDocumentsDataExists (documentsData, customCode) {
 
 function getButtonScripts (documentsData, customCode) {
     var result;
-    var scripts = "javascript:function(){";
+    var scripts = "";
     var customName = "";
     eval('result = documentsData["' + customCode+ '_Data"];');
     if (typeof(result) == "undefined") {
-        scripts += 'submitOngoingForm("' + customCode + '", ';
+        scripts += "submitOngoingForm('" + customCode + "', ";
         eval('customName = documentsData["' + customCode + '_Data"]["customName"];');
-        scripts += '"' + customName + '");';
+        scripts += "'" + customName + "', 'plan');";
     } else {
         //edit condition
-        scripts += 'submitOngoingForm("' + customCode + '", ';
+        scripts += "submitOngoingForm('" + customCode + "', ";
         eval('customName = documentsData["' + customCode + '_Data"]["customName"];');
-        scripts += '"' + customName + '");';
+        scripts += "'" + customName + "', onging);";
     }
-    scripts += "}";
     return scripts;
 }
 
@@ -415,14 +415,25 @@ function getDocumentsDataDetail (documentsData, customCode, detailType) {
     }
 }
 
-function submitOngoingForm(customCode, customName) {
-    jQuery("#ongoing_year") = nextYear;
-    jQuery("#ongoing_depId") = jQuery("#deptList option:selected").val();
-    jQuery("#ongoing_depName") = jQuery("#deptList option:selected").text();
-    jQuery("#ongoing_custom_code") = customCode;
-    jQuery("#ongoing_custom_name") = customName;
-    var form = document.forms[0];
-    form.submit();
+function submitOngoingForm(customCode, customName, type) {
+    var ongingForm = document.forms[0];
+    var planForm = document.forms[1];
+    if ( type === "ongoing" ) {
+        jQuery("#ongoing_year").val(nextYear);
+        jQuery("#ongoing_depId").val(jQuery("#deptList option:selected").val());
+        jQuery("#ongoing_depName").val(jQuery("#deptList option:selected").text());
+        jQuery("#ongoing_custom_code").val(customCode);
+        jQuery("#ongoing_custom_name").val(customName);
+        ongingForm.submit();
+    } else {
+        jQuery("#plan_year").val(nextYear);
+        jQuery("#plan_depId").val(jQuery("#deptList option:selected").val());
+        jQuery("#plan_depName").val(jQuery("#deptList option:selected").text());
+        jQuery("#plan_custom_code").val(customCode);
+        jQuery("#plan_custom_name").val(customName);
+        planForm.submit();
+    }
+
 }
 
 function renderSumTempl(sumObj) {
