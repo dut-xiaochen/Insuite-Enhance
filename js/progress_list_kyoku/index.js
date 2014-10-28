@@ -232,143 +232,174 @@ function renderDepList(kyoKuId, year) {
     var sum_increaseProfit1 = 0;
     var sum_increaseSales2 = 0;
     var sum_increaseProfit2 = 0;
+    
+    var noDisplayList = [];
 	
 	async.eachSeries(level5_groups, function(depItem, doEach) {
 		var depId = depItem[0];
 		var depName = depItem[1];
-		// 当年度　施策バインダからデータを取得
-		var url = '/hibiki/rest/1/binders/strategy_management/views/10001/documents?year=' 
-			+ year.toString() + '&&charge_group=' + depId;
 		
-		// 今年データ取得　（施策バインダから）
-		tag.doget(url, function(err, result) {
-			var depObj = {};
-			var currentYearSalesA = 0;
-			var currentYearProfitA = 0;
-			var currentYearSalesB = 0;
-			var currentYearProfitB = 0;
-			var currentYearSalesC = 0;
-			var currentYearProfitC = 0;
-			var currentYearSalesAB = 0;
-			var currentYearProfitAB = 0;
-			var currentYearSalesABC = 0;
-			var currentYearProfitABC = 0;
-			var lastYearSales = 0;
-			var lastYearProfit = 0;
-			var lastYearBudgetSales = 0;
-			var lastYearBudgetProfit = 0;
-			var increaseSales1 = 0;
-			var increaseProfit1 = 0;
-			var increaseSales2 = 0;
-			var increaseProfit2 = 0;
+		// もし、この部門のクライアントの「年度計画一覧表示」フラグは表示しない場合、集計しない
+		var mappingUrl = '/hibiki/rest/1/binders/custom_charge_group_master/views/allData/documents?charge_group=' 
+			+ depId + '&&list_flag=2&&random=' + date;
+		
+		// 表示しないクライアント一覧取得
+		tag.doget(mappingUrl, function(err, result) {			
+			if (parseInt(result.totalCount) > 0) {
+				result = tag.objToArray(result);
+				_.each(result.document, function(item) {
+					var mappingObj = tag.createMapping(item);
+					noDisplayList.push(mappingObj["customer_code"]);
+				});
+			}
 			
-			result = tag.objToArray(result);
+			// 当年度　施策バインダからデータを取得
+			var url = '/hibiki/rest/1/binders/strategy_management/views/allData/documents?year=' 
+				+ year.toString() + '&&charge_group=' + depId + "&&random=" + date;
 			
-			_.each(result.document, function(depItem, index) {
-				var strategy = tag.createStrategy(depItem);
-				//　当年度　A合計
-				if(strategy["accurcy"] == "A"){
-					currentYearSalesA += parseInt(strategy["sales"]);
-					currentYearProfitA += parseInt(strategy["profit"]);
-				}
-				//　当年度　B合計
-				if(strategy["accurcy"] == "B"){
-					currentYearSalesB += parseInt(strategy["sales"]);
-					currentYearProfitB += parseInt(strategy["profit"]);
-				}
-				//　当年度　C合計
-				if(strategy["accurcy"] == "C"){
-					currentYearSalesC += parseInt(strategy["sales"]);
-					currentYearProfitC += parseInt(strategy["profit"]);
-				}
-			});
-			// 当年度　A＋B合計【見込み】
-			currentYearSalesAB = currentYearSalesA + currentYearSalesB;
-			currentYearProfitAB = currentYearProfitA + currentYearProfitB;
-			//　当年度　A+B+C合計【目標】
-			currentYearSalesABC = currentYearSalesA + currentYearSalesB + currentYearSalesC;
-			currentYearProfitABC = currentYearProfitA + currentYearProfitB + currentYearProfitC;
-			
-			//　昨年度見通しデータ取得 (A+B+C)	　施策バインダから
-			url = '/hibiki/rest/1/binders/strategy_management/views/10001/documents?year=' 
-				+ (year-1).toString() + '&&charge_group=' + depId;
+			// 今年データ取得　（施策バインダから）
 			tag.doget(url, function(err, result) {
+				var depObj = {};
+				var currentYearSalesA = 0;
+				var currentYearProfitA = 0;
+				var currentYearSalesB = 0;
+				var currentYearProfitB = 0;
+				var currentYearSalesC = 0;
+				var currentYearProfitC = 0;
+				var currentYearSalesAB = 0;
+				var currentYearProfitAB = 0;
+				var currentYearSalesABC = 0;
+				var currentYearProfitABC = 0;
+				var lastYearSales = 0;
+				var lastYearProfit = 0;
+				var lastYearBudgetSales = 0;
+				var lastYearBudgetProfit = 0;
+				var increaseSales1 = 0;
+				var increaseProfit1 = 0;
+				var increaseSales2 = 0;
+				var increaseProfit2 = 0;
 				
 				result = tag.objToArray(result);
 				
 				_.each(result.document, function(depItem, index) {
 					var strategy = tag.createStrategy(depItem);
-					lastYearSales += parseInt(strategy["sales"]);
-					lastYearProfit += parseInt(strategy["profit"]);
+					
+					if ( _.indexOf(noDisplayList, strategy["customer_code"]) == -1 ) {
+						
+						//　当年度　A合計
+						if(strategy["accurcy"] == "A"){
+							currentYearSalesA += parseInt(strategy["sales"]);
+							currentYearProfitA += parseInt(strategy["profit"]);
+						}
+						//　当年度　B合計
+						if(strategy["accurcy"] == "B"){
+							currentYearSalesB += parseInt(strategy["sales"]);
+							currentYearProfitB += parseInt(strategy["profit"]);
+						}
+						//　当年度　C合計
+						if(strategy["accurcy"] == "C"){
+							currentYearSalesC += parseInt(strategy["sales"]);
+							currentYearProfitC += parseInt(strategy["profit"]);
+						}
+					}
+		
 				});
-				// 増減1
-				increaseSales1 = currentYearSalesAB - lastYearSales
-				increaseProfit1 = currentYearProfitAB - lastYearProfit
+				// 当年度　A＋B合計【見込み】
+				currentYearSalesAB = currentYearSalesA + currentYearSalesB;
+				currentYearProfitAB = currentYearProfitA + currentYearProfitB;
+				//　当年度　A+B+C合計【目標】
+				currentYearSalesABC = currentYearSalesA + currentYearSalesB + currentYearSalesC;
+				currentYearProfitABC = currentYearProfitA + currentYearProfitB + currentYearProfitC;
 				
-				// 昨年度予算データ取得　予定管理バインダから
-				url = '/hibiki/rest/1/binders/budget/views/10001/documents?year=' 
-					+ year.toString() + '&&charge_group=' + depId;
+				//　昨年度見通しデータ取得 (A+B+C)	　施策バインダから
+				url = '/hibiki/rest/1/binders/strategy_management/views/allData/documents?year=' 
+					+ (year-1).toString() + '&&charge_group=' + depId + "&&random=" + date;
 				tag.doget(url, function(err, result) {
 					
 					result = tag.objToArray(result);
 					
 					_.each(result.document, function(depItem, index) {
-						var budgetObj = tag.createBudget(depItem);
-						lastYearBudgetSales += parseInt(budgetObj["budget_sum_sales"]);
-						lastYearBudgetProfit += parseInt(budgetObj["budget_sum_profit"]);
+						
+						var strategy = tag.createStrategy(depItem);
+						
+						if ( _.indexOf(noDisplayList, strategy["customer_code"]) == -1 ) {
+							lastYearSales += parseInt(strategy["sales"]);
+							lastYearProfit += parseInt(strategy["profit"]);
+						}
 					});
-					// 増減2
-					increaseSales2 = currentYearSalesAB - lastYearBudgetSales;
-					increaseProfit2 = currentYearProfitAB - lastYearBudgetProfit;
+					// 増減1
+					increaseSales1 = currentYearSalesAB - lastYearSales
+					increaseProfit1 = currentYearProfitAB - lastYearProfit
 					
-					// 部門データ設定　コンマ追加
-					depObj.depId = depId;
-					depObj.depName = depName;
-					depObj.index = index;
-					depObj.currentYearSalesA = tag.addCommas(currentYearSalesA);
-					depObj.currentYearProfitA = tag.addCommas(currentYearProfitA);
-					depObj.currentYearSalesB = tag.addCommas(currentYearSalesB);
-					depObj.currentYearProfitB = tag.addCommas(currentYearProfitB);
-					depObj.currentYearSalesAB = tag.addCommas(currentYearSalesAB);
-					depObj.currentYearProfitAB = tag.addCommas(currentYearProfitAB);
-					depObj.currentYearSalesABC = tag.addCommas(currentYearSalesABC);
-					depObj.currentYearProfitABC = tag.addCommas(currentYearProfitABC);
-					depObj.lastYearSales = tag.addCommas(lastYearSales);
-					depObj.lastYearProfit = tag.addCommas(lastYearProfit);
-					depObj.lastYearBudgetSales = tag.addCommas(lastYearBudgetSales);
-					depObj.lastYearBudgetProfit = tag.addCommas(lastYearBudgetProfit);
-					depObj.increaseSales1 = tag.addCommas(increaseSales1);
-					depObj.increaseProfit1 = tag.addCommas(increaseProfit1);
-					depObj.increaseSales2 = tag.addCommas(increaseSales2);
-					depObj.increaseProfit2 = tag.addCommas(increaseProfit2);
-					
-					//　合計
-					sum_currentYearSalesA += currentYearSalesA;
-					sum_currentYearProfitA += currentYearProfitA;
-					sum_currentYearSalesB += currentYearSalesB;
-					sum_currentYearProfitB += currentYearProfitB;
-					sum_currentYearSalesAB += currentYearSalesAB;
-					sum_currentYearProfitAB += currentYearProfitAB;
-					sum_currentYearSalesABC += currentYearSalesABC;
-					sum_currentYearProfitABC += currentYearProfitABC;
-					sum_lastYearSales += lastYearSales;
-					sum_lastYearProfit += lastYearProfit;
-					sum_lastYearBudgetSales += lastYearBudgetSales;
-					sum_lastYearBudgetProfit += lastYearBudgetProfit;
-					sum_increaseSales1 += increaseSales1;
-					sum_increaseProfit1 += increaseProfit1;
-					sum_increaseSales2 += increaseSales2;
-					sum_increaseProfit2 += increaseProfit2;
-					
-					// 部門データテンプレート生成
-					renderDepListTempl(depObj);
-			        
-			        index ++;
-					doEach(err);					
+					// 昨年度予算データ取得　予定管理バインダから
+					url = '/hibiki/rest/1/binders/budget/views/allData/documents?year=' 
+						+ year.toString() + '&&charge_group=' + depId + "&&random=" + date;
+					tag.doget(url, function(err, result) {
+						
+						result = tag.objToArray(result);
+						
+						_.each(result.document, function(depItem, index) {
+							var budgetObj = tag.createBudget(depItem);
+							
+							if ( _.indexOf(noDisplayList, budgetObj["customer_code"]) == -1 ) {
+								lastYearBudgetSales += parseInt(budgetObj["budget_sum_sales"]);
+								lastYearBudgetProfit += parseInt(budgetObj["budget_sum_profit"]);
+							}
+							
+						});
+						// 増減2
+						increaseSales2 = currentYearSalesAB - lastYearBudgetSales;
+						increaseProfit2 = currentYearProfitAB - lastYearBudgetProfit;
+						
+						// 部門データ設定　コンマ追加
+						depObj.depId = depId;
+						depObj.depName = depName;
+						depObj.index = index;
+						depObj.currentYearSalesA = tag.addCommas(currentYearSalesA);
+						depObj.currentYearProfitA = tag.addCommas(currentYearProfitA);
+						depObj.currentYearSalesB = tag.addCommas(currentYearSalesB);
+						depObj.currentYearProfitB = tag.addCommas(currentYearProfitB);
+						depObj.currentYearSalesAB = tag.addCommas(currentYearSalesAB);
+						depObj.currentYearProfitAB = tag.addCommas(currentYearProfitAB);
+						depObj.currentYearSalesABC = tag.addCommas(currentYearSalesABC);
+						depObj.currentYearProfitABC = tag.addCommas(currentYearProfitABC);
+						depObj.lastYearSales = tag.addCommas(lastYearSales);
+						depObj.lastYearProfit = tag.addCommas(lastYearProfit);
+						depObj.lastYearBudgetSales = tag.addCommas(lastYearBudgetSales);
+						depObj.lastYearBudgetProfit = tag.addCommas(lastYearBudgetProfit);
+						depObj.increaseSales1 = tag.addCommas(increaseSales1);
+						depObj.increaseProfit1 = tag.addCommas(increaseProfit1);
+						depObj.increaseSales2 = tag.addCommas(increaseSales2);
+						depObj.increaseProfit2 = tag.addCommas(increaseProfit2);
+						
+						//　合計
+						sum_currentYearSalesA += currentYearSalesA;
+						sum_currentYearProfitA += currentYearProfitA;
+						sum_currentYearSalesB += currentYearSalesB;
+						sum_currentYearProfitB += currentYearProfitB;
+						sum_currentYearSalesAB += currentYearSalesAB;
+						sum_currentYearProfitAB += currentYearProfitAB;
+						sum_currentYearSalesABC += currentYearSalesABC;
+						sum_currentYearProfitABC += currentYearProfitABC;
+						sum_lastYearSales += lastYearSales;
+						sum_lastYearProfit += lastYearProfit;
+						sum_lastYearBudgetSales += lastYearBudgetSales;
+						sum_lastYearBudgetProfit += lastYearBudgetProfit;
+						sum_increaseSales1 += increaseSales1;
+						sum_increaseProfit1 += increaseProfit1;
+						sum_increaseSales2 += increaseSales2;
+						sum_increaseProfit2 += increaseProfit2;
+						
+						// 部門データテンプレート生成
+						renderDepListTempl(depObj);
+				        
+				        index ++;
+						doEach(err);					
+					});
 				});
-			});
+			});	
 		});
-		
+			
 	}, function(err) {
 		if(err) {
 			alert(err_system_msg);
@@ -574,27 +605,4 @@ function lineBackcolorChange(num,color,chk){
     document.getElementById(data11).className = bcolor;
     document.getElementById(data12).className = bcolor;
     document.getElementById(data15).className = bcolor;
-    document.getElementById(data16).className = bcolor;
-
-    if (chk == 'no') {
-    } else if ( chk == 'on' ) {
-        document.getElementById(data05).className = bcolor;
-        document.getElementById(data06).className = bcolor;
-        document.getElementById(data07).className = bcolor;
-        document.getElementById(data08).className = bcolor;
-        document.getElementById(data11).className = bcolor;
-        document.getElementById(data12).className = bcolor;
-        document.getElementById(data15).className = bcolor;
-        document.getElementById(data16).className = bcolor;
-    } else if ( chk == 'off' ) {
-        document.getElementById(data05).className = "backgroud_color1";
-        document.getElementById(data06).className = "backgroud_color1";
-        document.getElementById(data07).className = "backgroud_color2";
-        document.getElementById(data08).className = "backgroud_color2";
-        document.getElementById(data11).className = "backgroud_color3";
-        document.getElementById(data12).className = "backgroud_color3";
-        document.getElementById(data15).className = "backgroud_color4";
-        document.getElementById(data16).className = "backgroud_color4";
-    }
-    return;
-}
+    document.getElementById(dat

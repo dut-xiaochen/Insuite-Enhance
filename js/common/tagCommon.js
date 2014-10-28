@@ -184,6 +184,9 @@ var tag = {
 				else if(item["key"] == "budget_sum_profit"){
 					result["budget_sum_profit"] = item["value"];
 				}
+				else if(item["key"] == "customer_code"){
+					result["customer_code"] = item["value"];
+				}
 			}); 
 	  }
 
@@ -201,6 +204,30 @@ var tag = {
 			}); 
 	  }
 	  result["id"] = doc.id;
+
+	return result;
+  },
+  
+  createMapping: function(doc){
+	  var result = {};
+	  
+	  if (!_.isUndefined(doc)) {
+		  _.each(doc["item"],function(item){
+				if(item["key"] == "customer_code"){
+					result["customer_code"] = item["value"];
+					
+				} else if(item["key"] == "charge_group"){
+					result["charge_group"] = item["value"]["id"];
+					
+				} else if(item["key"] == "list_flag"){
+					result["list_flag"] = item["value"]["id"];
+					
+				} else if(item["key"] == "other_flag"){
+					// result["other_flag"] = item["value"];
+				}
+					
+			}); 
+	  }
 
 	return result;
   },
@@ -279,146 +306,69 @@ var tag = {
 					result["other_charger"] = "";
 				}
 			}
-		});
-	}
-	
-	return result;
-  },
-  
-  addCommas: function(nStr){
-    if (typeof(nStr) === "undefined") {
-      nStr = "0";
-    }
-	  nStr += '';
-	  var x = nStr.split('.');
-	  var x1 = x[0];
-	  var rgx = /(\d+)(\d{3})/;
-	  while (rgx.test(x1)) {
-	   x1 = x1.replace(rgx, '$1,$2');
-	  }
-	  return x1;
-  },
-  
-  objToArray: function(obj){
-	  if (parseInt(obj.totalCount) != 1) {
-		  return obj;
-	  } else {
-		  var tmpArray = [];
-		  tmpArray.push(obj.document);
-		  obj.document = tmpArray;
-		  return obj;
-	  }
-  },
-  
-  padLeft:function(num) {
-	  var l = num.toString().length;
-	  var str = '';
-	  if(l < 8) {
-		  while(str.length < (8 - l)){
-			  str += '0';
-		  }
-		  return (str + num);
-	  }
-	  return num.toString();
-  },
-  
-  getGroups:function (){
-  	return tag.global_groups;
-  },
-  
-  getLevel2Group:function (){
-	var map = {};
-	_.each(tag.global_groups,function(item){
-		if(!_.isUndefined(item)) {
-			map[item[0]] = item[1];
-		}
-	});
-	
-	var result = [];
-	_.each(map,function(value,key){
-		result.push([key,value]);
-	});
-	
-	result = _.sortBy(result, function(item) {
-        return item[0];
-    });
-	
-	return result;
-  },
-
-  getLevel3GroupByFatherID:function (id){
-	var map = {};
-	_.each(tag.global_groups,function(item){
-		if(!_.isUndefined(item)) {
-			if(item[0] == id.toString()) {
-				map[item[2]] = item[3];
+			
+			else if(item["key"] == "sales_1"){
+				result["sales_1"] = item["value"];
 			}
-		}
-	});
-	var result = [];
-	_.each(map,function(value,key){
-		result.push([key,value]);
-	});
-	
-	result = _.sortBy(result, function(item) {
-        return item[0];
-    });
-	
-	return result;
-  },
-
-  getLevel4GroupByFatherID:function (id){
-	var map = {};
-	_.each(tag.global_groups,function(item){
-		if(!_.isUndefined(item)) {
-			if(item[2] == id.toString()) {
-				map[item[4]] = item[5];
+			else if(item["key"] == "sales_2"){
+				result["sales_2"] = item["value"];
 			}
-		}	
-	});
-	var result = [];
-	_.each(map,function(value,key){
-		result.push([key,value]);
-	});
-	
-	result = _.sortBy(result, function(item) {
-        return item[0];
-    });
-	
-	return result;
-  },
-  
-  getLevel5GroupByFatherID:function (id){
-	var map = {};
-	_.each(tag.global_groups,function(item){
-		if(!_.isUndefined(item)) {
-			if(item[4] == id.toString()) {
-				map[item[6]] = item[7];
+			else if(item["key"] == "sales_3"){
+				result["sales_3"] = item["value"];
 			}
-		}
-	});
-	var result = [];
-	_.each(map,function(value,key){
-		result.push([key,value]);
-	});
-	
-	result = _.sortBy(result, function(item) {
-        return item[0];
-    });
-	
-	return result;
-  },
-  
-  global_groups:[],
-  
-  //plan.cgi
-  year:"",
-  dept_code:"",
-  dept_name:"",
-  customer_code:"",
-  customer_name:"",
-  //plan-regist.cgi
-  strategy_code:"",
-  retrieve:0
-};
-
+			else if(item["key"] == "sales_4"){
+				result["sales_4"] = item["value"];
+			}
+			else if(item["key"] == "sales_5"){
+				result["sales_5"] = item["value"];
+			}
+			else if(item["key"] == "sales_6"){
+				result["sales_6"] = item["value"];
+			}
+			else if(item["key"] == "sales_7"){
+				result["sales_7"] = item["value"];
+			}
+			else if(item["key"] == "sales_8"){
+				result["sales_8"] = item["value"];
+			}
+			else if(item["key"] == "sales_9"){
+				result["sales_9"] = item["value"];
+			}
+			else if(item["key"] == "sales_10"){
+				result["sales_10"] = item["value"];
+			}
+			else if(item["key"] == "sales_11"){
+				result["sales_11"] = item["value"];
+			}
+			else if(item["key"] == "sales_12"){
+				result["sales_12"] = item["value"];
+			}
+			else if(item["key"] == "profit_1"){
+				result["profit_1"] = item["value"];
+			}
+			else if(item["key"] == "profit_2"){
+				result["profit_2"] = item["value"];
+			}
+			else if(item["key"] == "profit_3"){
+				result["profit_3"] = item["value"];
+			}
+			else if(item["key"] == "profit_4"){
+				result["profit_4"] = item["value"];
+			}
+			else if(item["key"] == "profit_5"){
+				result["profit_5"] = item["value"];
+			}
+			else if(item["key"] == "profit_6"){
+				result["profit_6"] = item["value"];
+			}
+			else if(item["key"] == "profit_7"){
+				result["profit_7"] = item["value"];
+			}
+			else if(item["key"] == "profit_8"){
+				result["profit_8"] = item["value"];
+			}
+			else if(item["key"] == "profit_9"){
+				result["profit_9"] = item["value"];
+			}
+			else if(item["key"] == "profit_10"){
+				result["profit_10"] = item["value

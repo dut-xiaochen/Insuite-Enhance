@@ -22,27 +22,27 @@ sub get_params {
 	
 	my $year = $query->param('year');
 	if($year){
-		$info = $info . "tag.year = $year;";
+		$info = $info . "var year = $year;";
 	}
 	
 	my $dept_code = $query->param('depId');
 	if($dept_code){
-		$info = $info . "tag.dept_code = $dept_code;";
+		$info = $info . "var dept_code = $dept_code;";
 	}
 	
 	my $dept_name = $query->param('depName');
 	if($dept_name){
-		$info = $info . "tag.dept_name = \"$dept_name\";";
+		$info = $info . "var dept_name = \"$dept_name\";";
 	}
 	
 	my $customer_code = $query->param('customer_code');
 	if($customer_code){
-		$info = $info . "tag.customer_code = \"$customer_code\";";
+		$info = $info . "var customer_code = \"$customer_code\";";
 	}
 	
 	my $customer_name = $query->param('customer_name');
 	if($customer_name){
-		$info = $info . "tag.customer_name = \"$customer_name\";";
+		$info = $info . "var customer_name = \"$customer_name\";";
 	}
 	
 	return $info;
@@ -217,9 +217,7 @@ my $outbuf = <<buff_end;
             	<td id="a_meclass_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:left;">{{type}}</td>
             	<td id="a_measure_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:left;">{{strategy_name}}</td>
             	<td id="a_cradmin_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:left;">
-            		<%if({{main_charger}} != ""){
                 	<img src="$session->{img_rdir}/custom/TAG/ico_fc_user.png" title="@{[t_('一般ユーザ')]}" align="absmiddle" /> <a href="#" onclick="">{{main_charger}}</a>
-            		}%>
             	</td>
             	<td id="a_msales1_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:right;">{{pre_sales}}</td>
             	<td id="a_margin1_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:right;">{{pre_profit}}</td>

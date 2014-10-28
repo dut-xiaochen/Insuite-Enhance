@@ -23,19 +23,27 @@ sub get_params {
 	
 	my $code = $query->param('strategy_code');
 	if($code){
-		$info = $info . "tag.strategy_code = $code;";
+		$info = $info . "var strategy_code = $code;";
 	}
 	else{
-		$info = $info . "tag.strategy_code = -1;";
+		$info = $info . "var strategy_code = -1;";
 	}
 	
-	#change to judge tmp file update time will more better
+	#change to judge tmp file update time will better
 	my $retrieve = $query->param('retrieve');
 	if($retrieve){
-		$info = $info . "tag.retrieve = 1";
+		$info = $info . "var retrieve = 1;";
 	}
 	else{
-		$info = $info . "tag.retrieve = 0";
+		$info = $info . "var retrieve = 0;";
+	}
+	
+	my $mode = $query->param('mode');
+	if($mode){
+		$info = $info . "var mode = \"$mode\";";	
+	}
+	else{
+		$info = $info . "var mode = \"edit\";";	
 	}
 	return $info;
 }
@@ -75,7 +83,33 @@ sub get_select_user{
 			$code = 1;
 		}
 		my $sc = DA::IS::get_data_parse($session,"@{[t_('クライアント施策 登録')]}",$query->param("strategy_code"));
-		
+	}
+}
+
+sub get_project_html{
+	my ($query) = @_;
+	if($query->param('mode') eq 'edit_continue_strategy'){
+		return '<p id="strategy_project"></p>';
+	}else{
+		return '<input type="text" name="strategy_project" value="" size="15">';
+	}
+}
+
+sub get_type_html{
+	my ($query) = @_;
+	if($query->param('mode') eq 'edit_continue_strategy'){
+		return '<p id="strategy_type"></p>';
+	}else{
+		return '<input type="text" name="strategy_type" value="" size="15">';
+	}
+}
+
+sub get_strategy_name_html{
+	my ($query) = @_;
+	if($query->param('mode') eq 'edit_continue_strategy'){
+		return '<p id="strategy_name"></p>';
+	}else{
+		return '<input type="text" name="strategy_name" value="" size="50">';
 	}
 }
 
@@ -88,6 +122,9 @@ my $query = Apache::Request->new( $params, TEMP_DIR => "$session->{temp_dir}" );
 DA::Valid::check_param_all( $session, $query );
 my $params = get_params($query);
 my $open_select_user_func = get_open_select_user_win_script($session,$query);
+my $project_html = get_project_html($query);
+my $type_html = get_type_html($query);
+my $strategy_name_html = get_strategy_name_html($query);
 
 my $outbuf = <<buff_end;
 <html>
@@ -131,11 +168,11 @@ my $outbuf = <<buff_end;
     <tbody>
         <tr>
             <td style="text-align:right;">@{[t_('施策コード')]}</td>
-            <td colspan="2" id="strategy_code">1412345</td>
+            <td colspan="2" id="strategy_code"></td>
         </tr>
         <tr>
             <td style="text-align:right;">@{[t_('クライアント')]}</td>
-            <td colspan="2" id="client_name"></td>
+            <td colspan="2" id="customer_name"></td>
         </tr>
         <tr>
             <td style="text-align:right;">@{[t_('クライアントキーマン')]}</td>
@@ -150,19 +187,19 @@ my $outbuf = <<buff_end;
         <tr>
             <td style="text-align:right;">@{[t_('項目')]}</td>
             <td colspan="2">
-                <input type="text" name="strategy_project" value="" size="15">
+                $project_html
             </td>
         </tr>
         <tr>
             <td style="text-align:right;">@{[t_('媒体種別')]}</td>
             <td colspan="2">
-                <input type="text" name="strategy_type" value="" size="15">
+                $type_html
             </td>
         </tr>
         <tr>
             <td style="text-align:right;"><font color=red>* </font>@{[t_('施策')]}</td>
             <td colspan="2">
-                <input type="text" name="strategy_name" value="" size="50">
+                $strategy_name_html
             </td>
         </tr>
         <tr>
@@ -184,7 +221,7 @@ my $outbuf = <<buff_end;
         </tr>
         <tr>
             <td colspan="2" id="uri_day" style="display:none">
-                @{[t_('合計：')]}75,000<br>
+                @{[t_('合計：')]}<span id="sales_sum_viewer">75,000</span><br>
                   @{[t_('4月')]}<input type="text" name="strategy_sales_m4" value="" size="5">  @{[t_('7月')]}<input type="text" name="strategy_sales_m7" value="" size="5">  @{[t_('10月')]}<input type="text" name="strategy_sales_m10" value="" size="5">  @{[t_('1月')]}<input type="text" name="strategy_sales_m1" value="" size="5"><br>
                   @{[t_('5月')]}<input type="text" name="strategy_sales_m5" value="" size="5">  @{[t_('8月')]}<input type="text" name="strategy_sales_m8" value="" size="5">  @{[t_('11月')]}<input type="text" name="strategy_sales_m11" value="" size="5">  @{[t_('2月')]}<input type="text" name="strategy_sales_m2" value="" size="5"><br>
                   @{[t_('6月')]}<input type="text" name="strategy_sales_m6" value="" size="5">  @{[t_('9月')]}<input type="text" name="strategy_sales_m9" value="" size="5">  @{[t_('12月')]}<input type="text" name="strategy_sales_m12" value="" size="5">  @{[t_('3月')]}<input type="text" name="strategy_sales_m3" value="" size="5">
@@ -201,7 +238,7 @@ my $outbuf = <<buff_end;
         </tr>
         <tr>
             <td colspan="2" id="rieki_day" style="display:none">
-                @{[t_('合計：')]}75,000<br>
+                @{[t_('合計：')]}<span id="profit_sum_viewer">75,000</span><br>
                   @{[t_('4月')]}<input type="text" name="strategy_profit_m4" value="" size="5">  @{[t_('7月')]}<input type="text" name="strategy_profit_m7" value="" size="5">  @{[t_('10月')]}<input type="text" name="strategy_profit_m10" value="" size="5">  @{[t_('1月')]}<input type="text" name="strategy_profit_m1" value="" size="5"><br>
                   @{[t_('5月')]}<input type="text" name="strategy_profit_m5" value="" size="5">  @{[t_('8月')]}<input type="text" name="strategy_profit_m8" value="" size="5">  @{[t_('11月')]}<input type="text" name="strategy_profit_m11" value="" size="5">  @{[t_('2月')]}<input type="text" name="strategy_profit_m2" value="" size="5"><br>
                   @{[t_('6月')]}<input type="text" name="strategy_profit_m6" value="" size="5">  @{[t_('9月')]}<input type="text" name="strategy_profit_m9" value="" size="5">  @{[t_('12月')]}<input type="text" name="strategy_profit_m12" value="" size="5">  @{[t_('3月')]}<input type="text" name="strategy_profit_m3" value="" size="5">

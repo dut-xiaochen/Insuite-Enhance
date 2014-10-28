@@ -253,6 +253,7 @@ my $head = <<buf_end;
 var currentYear = '$currentYear';
 var lastYear = parseInt(currentYear) - 1;
 var nextYear = parseInt(currentYear) + 1;
+var date = new Date().getTime();
 //--></script>
 @include_js
 <title>@{[t_('営業年度計画一覧（局別）')]}</title>

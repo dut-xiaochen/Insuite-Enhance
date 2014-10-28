@@ -15,12 +15,28 @@ function getStrategyCode(){
 	return jQuery('#strategy_code').text();
 }
 
+function setStrategyCustomerName(name){
+	jQuery('#customer_name').text(name);
+}
+
+function getStrategyCustomerName(){
+	return jQuery('#customer_name').text();
+}
+
 function setStrategyName(name){
-	jQuery('input[name=strategy_name]').val(name);
+	if(mode == "edit_continue_strategy"){
+		jQuery('#strategy_name').text(name);
+	}else{
+		jQuery('input[name=strategy_name]').val(name);
+	}
 }
 
 function getStrategyName(){
-	return jQuery('input[name=strategy_name]').val();
+	if(mode == "edit_continue_strategy"){
+		return jQuery('#strategy_name').text();
+	}else{
+		return jQuery('input[name=strategy_name]').val();
+	}
 }
 
 function setStrategyClientKey(key){
@@ -40,19 +56,35 @@ function getStrategyProperty(){
 }
 
 function setStrategyType(type){
-	jQuery('input[name=strategy_type]').val(type);
+	if(mode == "edit_continue_strategy"){
+		jQuery('#strategy_type').text(type);
+	}else{
+		jQuery('input[name=strategy_type]').val(type);
+	}
 }
 
 function getStrategyType(){
-	return jQuery('input[name=strategy_type]').val();
+	if(mode == "edit_continue_strategy"){
+		return jQuery('#strategy_type').text();
+	}else{
+		return jQuery('input[name=strategy_type]').val();
+	}
 }
 
 function setStrategyProject(project){
-	jQuery('input[name=strategy_project]').val(project);
+	if(mode == "edit_continue_strategy"){
+		jQuery("#strategy_project").text(project);
+	}else{
+		jQuery('input[name=strategy_project]').val(project);
+	}
 }
 
 function getStrategyProject(){
-	return jQuery('input[name=strategy_project]').val();
+	if(mode == "edit_continue_strategy"){
+		return jQuery("#strategy_project").text();
+	}else{
+		return jQuery('input[name=strategy_project]').val();
+	}
 }
 
 function setStrategyCharger(value){
@@ -71,12 +103,44 @@ function getStrategySales(){
 	return jQuery('input[name=strategy_sales]').val();
 }
 
+function setStrategyMonthSales(month,sales){
+	jQuery('input[name=strategy_sales_m' + month + ']').val(tag.addCommas(sales));
+}
+
+function getStrategyMonthSales(month){
+	return jQuery('input[name=strategy_sales_m' + month + ']').val();
+}
+
 function setStrategyProfit(profit){
 	jQuery('input[name=strategy_profit]').val(profit);
 }
 
 function getStrategyProfit(){
 	return jQuery('input[name=strategy_profit]').val();
+}
+
+function setStrategyMonthProfit(month,profit){
+	jQuery('input[name=strategy_profit_m' + month + ']').val(tag.addCommas(profit));
+}
+
+function getStrategyMonthProfit(month){
+	return jQuery('input[name=strategy_profit_m' + month + ']').val();
+}
+
+function setSalesSumViewer(value){
+	jQuery('#sales_sum_viewer').text(tag.addCommas(value));
+}
+
+function getSalesSumViewer(){
+	return jQuery('#sales_sum_viewer').text();
+}
+
+function setProfitSumViewer(value){
+	jQuery('#profit_sum_viewer').text(tag.addCommas(value));
+}
+
+function getProfitSumViewer(){
+	return jQuery('#profit_sum_viewer').text();
 }
 
 function setStrategyPeriod2(period){
@@ -96,11 +160,13 @@ function getStrategyPeriod3(){
 }
 
 function setStrategyPeriod4(period){
-	jQuery('#strategy_period4').val(period);
+	var p = (parseInt(period) - 2013).toString();
+	jQuery('#strategy_period4').val(p);
 }
 
 function getStrategyPeriod4(){
-	return jQuery('#strategy_period4').val();
+	var p = (parseInt(jQuery('#strategy_period4').val()) + 2013).toString();
+	return p;
 }
 
 function setStrategyMemo(memo){
@@ -136,12 +202,17 @@ function getUpdatedDate(){
 }
 
 function setStrategyContent(content){
-	setCreatedDate(content.created_at);
-	setUpdatedDate(content.updated_at);
+
+	if(content.totalCount > 1){
+		//multi record exist,this data is wrong  
+	}
 	
 	if(content.document){
-		content = content.document[0];
+		content = content.document;
 	}
+	
+	setCreatedDate(content.created_at);
+	setUpdatedDate(content.updated_at);
 	
 	_.each(content.item,function(item){
 		if(item.key){
@@ -190,16 +261,25 @@ function setStrategyContent(content){
 		else if(item.key == "accurcy"){
 			setStrategyAccurcy(parseInt(item.value.id) + 1);	
 		}
+		else if(item.key.substring(0,6) == "sales_"){
+			var month = item.key.substring(6,item.key.length);
+			setStrategyMonthSales(month,item.value);
+		}
+		else if(item.key.substring(0,7) == "profit_"){
+			var month = item.key.substring(7,item.key.length);
+			setStrategyMonthProfit(month,item.value);
+		}
 	});
 }
 
 function getStrategyJSONFromView(){
-	return {
+	var result = {
 		strategy_code:getStrategyCode(),
 		property:getStrategyProperty(),
 		project:getStrategyProject(),
 		type:getStrategyType(),
 		strategy_name:getStrategyName(),
+		customer_name:getStrategyCustomerName(),
 		client_key:getStrategyClientKey(),
 		main_charger:getStrategyCharger(),
 		sales:getStrategySales(),
@@ -212,116 +292,17 @@ function getStrategyJSONFromView(){
 		created_date:getCreatedDate(),
 		updated_date:getUpdatedDate()
 	};
-}
-
-function setStrategyFromJSON(data){
-	setStrategyCode(data.strategy_code);
-	setStrategyProperty(data.property);
-	setStrategyProject(data.project);
-	setStrategyType(data.type);
-	setStrategyName(data.strategy_name);
-	setStrategyClientKey(data.client_key);
-//	setStrategyCharger(data.main_charger);
-	setStrategySales(data.sales);
-	setStrategyProfit(data.profit);
-	setStrategyPeriod2(data.period2);
-	setStrategyPeriod3(data.period3);
-	setStrategyPeriod4(data.period4);
-	setStrategyAccurcy(data.accurcy);
-	setStrategyMemo(data.memo);
-	setCreatedDate(data.created_date);
-	setUpdatedDate(data.updated_date);
-}
-
-function getStrategyInfoByCode(code){
-	var url = '/hibiki/rest/1/binders/strategy_management/views/10001/documents?strategy_code=' + code;
 	
-	tag.doget(url,function(err,result){
-		if(err){
-			return;
-		}
-		setStrategyContent(result);
-		testGetValue();
-	});
-}
-
-jQuery(function(){
-	if(tag.retrieve == 0){
-		if(tag.strategy_code != -1){
-			getStrategyInfoByCode(tag.strategy_code);
-		}
-		else{
-		}
+	var key = "";
+	var value = "";
+	for(var month = 1; month < 13; month++){
+		key = "sales_" + month.toString();
+		value = getStrategyMonthSales(month);
+		result[key] = value;
+		
+		key = "profit_" + month.toString();
+		value = getStrategyMonthProfit(month);
+		result[key] = value;
 	}
-	else{
-		retrieveInfoFromServerTmpFile();
-	}
-});
-
-function backupInfoInServerTmpFile(){
-	var info = getStrategyJSONFromView();
-
-	tag.dopost('/cgi-bin/custom/TAG/cache-plan-regist.cgi',JSON.stringify(info),function(err,data){
-		if(err){
-			console.log('errr-post!',err);
-		}
-		else{
-			console.log(data);
-		}
-	});
-}
-
-function retrieveInfoFromServerTmpFile(){
-	tag.doget('/cgi-bin/custom/TAG/cache-plan-regist.cgi',function(err,data){
-		if(err){
-			return;
-		}
-		setStrategyFromJSON(data.data);
-	});
-}
-
-function onSelectUser(){
-	backupInfoInServerTmpFile();
-	openSelectUserWin();
-}
-
-function clearAllValue(){
 	
-}
-
-function insertOrUpdateStrategy(){
-	if(tag.strategy_code == -1){
-		insertStrategy();
-	}
-	else{
-		updateStrategy();
-	}
-}
-
-function insertStrategy(){
-	
-}
-
-function updateStrategy(){
-	
-}
-
-function testGetValue(){
-	console.log("testGetValueStart");
-	console.log(getStrategyCode());
-	console.log(getStrategyName());
-	console.log(getStrategyClientKey());
-	console.log(getStrategyProperty());
-	console.log(getStrategyType());
-	console.log(getStrategyProject());
-	console.log(getStrategyCharger());
-	console.log(getStrategySales());
-	console.log(getStrategyProfit());
-	console.log(getStrategyPeriod2());
-	console.log(getStrategyPeriod3());
-	console.log(getStrategyMemo());
-	console.log(getStrategyAccurcy());
-	console.log("testGetValueEnd");
-}
-
-
+	return re

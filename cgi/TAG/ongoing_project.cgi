@@ -52,13 +52,14 @@ var continueDataList = [];
 var lock = false;
 var err_system_msg = "$err_system_msg";
 var err_double_click_msg = "$err_double_click_msg";
+var date = new Date().getTime();
 </script>
 
 <h2>@{[t_('·ÑÂ³»ÜºöÅÐÏ¿')]}</h2>
 <form id="ongoing_form" action="plan.cgi" method="POST">
 <input type="hidden" id="list_cnt">
 
-<input type="hidden" id="year"¡¡name="year">
+<input type="hidden" id="year" name="year">
 <input type="hidden" id="customer_code" name="customer_code">
 <input type="hidden" id="customer_name" name="customer_name">
 <input type="hidden" id="depId" name="depId">

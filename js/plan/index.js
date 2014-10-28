@@ -303,7 +303,8 @@ function convertToContinueStrategy(strategy,pre_year_data){
         update_date:strategy.update_date
 	};
 	
-	var pre = pre_year_data["pre_year_data"][result.strategy_code];
+	var pre = pre_year_data["pre_year_data"][result.strategy_code.substring(4,result.strategy_code.length)];
+	
 	if(pre){
 		result.main_charger = pre.main_charger;
 		result.pre_sales = pre.sales;
@@ -367,7 +368,7 @@ function getPreYearData(year,custom_code,charge_group_code){
 		
 		_.each(result.document,function(doc){
 			var strategy = createStrategy(doc);
-			r["pre_year_data"][strategy.strategy_code] = strategy;
+			r["pre_year_data"][strategy.strategy_code.substring(4,strategy.strategy_code.length)] = strategy;
 			if(strategy["accurcy"] == "A"){
 				r["sales_sum_of_A_plus_B"] += parseInt(strategy["sales"]);
 				r["profit_sum_of_A_plus_B"] += parseInt(strategy["profit"]);
@@ -511,9 +512,9 @@ function getBudget(year,custom_code,charge_group_code,pre_year_data,this_year_da
 }
 
 jQuery(function(){
-	setNames(tag.dept_name,tag.customer_name);
-	getPreYearData(tag.year,tag.customer_code,tag.dept_code);
-	setYear(tag.year);
+	setNames(dept_name,customer_name);
+	getPreYearData(year,customer_code,dept_code);
+	setYear(year);
 });
 
 function makePlan(type){
@@ -521,5 +522,4 @@ function makePlan(type){
 }
 
 function editPlan(id){
-	window.open("/cgi-bin/custom/TAG/plan-regist.cgi?strategy_code="+id);
-}
+	window.ope

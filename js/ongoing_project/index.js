@@ -10,7 +10,7 @@ function init() {
 function render() {
 	// 施策一覧取得
 	var url = '/hibiki/rest/1/binders/strategy_management/views/allData/documents?year=' 
-		+ year.toString() + '&&charge_group=' + depId + "&&customer_code=" + customer_code;
+		+ year.toString() + '&&charge_group=' + depId + "&&customer_code=" + customer_code + "&&random=" + date;
 	var dataList = [];
 	
 	tag.doget(url, function(err, result) {
@@ -164,9 +164,11 @@ function changeCode(continueDataList) {
 	_.each(continueDataList, function(strategy) {
 		var code = strategy.strategy_code;
 		var year = code.substr(0,4);
-		var newCode = (parseInt(year)+1) + code.substr(4,6);
+		var newCode = (parseInt(year)+1) + code.substr(4,8);
 		strategy.strategy_code = newCode;
 		strategy.year = parseInt(year) + 1 + "";
+		// 属性は「継続」に設定
+		strategy.property = "1";
 	});
 	return continueDataList;
 }
@@ -236,8 +238,4 @@ function changeCheckBox(num){
     if( myid.checked == true ) {
         lineBackcolorChange(num,'gray','on');
     } else if ( num % 2 == 0 ) {
-        lineBackcolorChange(num,'white','off');
-    } else {
-        lineBackcolorChange(num,'gray2','off');
-    }
-}
+        lineBackcolorChange(num,
