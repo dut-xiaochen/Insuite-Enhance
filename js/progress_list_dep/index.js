@@ -417,7 +417,7 @@ function getButtonScripts (documentsData, customCode) {
         //edit condition
         scripts += "submitForm('" + customCode + "', ";
         eval('customName = documentsData["' + customCode + '_Data"]["customName"];');
-        scripts += "'" + customName + "', plan);";
+        scripts += "'" + customName + "', 'plan');";
     }
     return scripts;
 }
@@ -433,22 +433,23 @@ function getDocumentsDataDetail (documentsData, customCode, detailType) {
 }
 
 function submitForm(customCode, customName, type) {
-    var ongingForm = document.forms[0];
-    var planForm = document.forms[1];
+    var form = jQuery("#form");
     if ( type === "ongoing" ) {
-        jQuery("#ongoing_year").val(nextYear);
-        jQuery("#ongoing_depId").val(jQuery("#deptList option:selected").val());
-        jQuery("#ongoing_depName").val(jQuery("#deptList option:selected").text());
-        jQuery("#ongoing_custom_code").val(customCode);
-        jQuery("#ongoing_custom_name").val(customName);
-        ongingForm.submit();
+        form.attr("action", "/cgi-bin/custom/TAG/ongoing_project.cgi");
+        jQuery("#year").val(nextYear);
+        jQuery("#depId").val(jQuery("#deptList option:selected").val());
+        jQuery("#depName").val(jQuery("#deptList option:selected").text());
+        jQuery("#customer_code").val(customCode);
+        jQuery("#customer_name").val(customName);
+        form.submit();
     } else {
-        jQuery("#plan_year").val(nextYear);
-        jQuery("#plan_depId").val(jQuery("#deptList option:selected").val());
-        jQuery("#plan_depName").val(jQuery("#deptList option:selected").text());
-        jQuery("#plan_custom_code").val(customCode);
-        jQuery("#plan_custom_name").val(customName);
-        planForm.submit();
+        form.attr("action", "/cgi-bin/custom/TAG/plan.cgi");
+        jQuery("#year").val(nextYear);
+        jQuery("#depId").val(jQuery("#deptList option:selected").val());
+        jQuery("#depName").val(jQuery("#deptList option:selected").text());
+        jQuery("#customer_code").val(customCode);
+        jQuery("#customer_name").val(customName);
+        form.submit();
     }
 
 }

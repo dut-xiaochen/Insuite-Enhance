@@ -220,19 +220,12 @@ jQuery(function () {
 
 </p>
 
-<form action="ongoing_project.cgi" name="ongoing_project" method="post">
-<div id="ongoing_year" name="year" type="hidden" value=""></div>
-<div id="ongoing_depId" name="depId" type="hidden" value=""></div>
-<div id="ongoing_depName" name="depName" type="hidden" value=""></div>
-<div id="ongoing_custom_code" name="customer_code" type="hidden" value=""></div>
-<div id="ongoing_custom_name" name="customer_name" type="hidden" value=""></div>
-</form>
-<form action="plan.cgi" name="plan" method="post">
-<div id="plan_year" name="year" type="hidden" value=""></div>
-<div id="plan_depId" name="depId" type="hidden" value=""></div>
-<div id="plan_depName" name="depName" type="hidden" value=""></div>
-<div id="plan_custom_code" name="customer_code" type="hidden" value=""></div>
-<div id="plan_custom_name" name="customer_name" type="hidden" value=""></div>
+<form id="form" method="post">
+<div id="year" name="year" type="hidden" value=""></div>
+<div id="depId" name="depId" type="hidden" value=""></div>
+<div id="depName" name="depName" type="hidden" value=""></div>
+<div id="customer_code" name="customer_code" type="hidden" value=""></div>
+<div id="customer_name" name="customer_name" type="hidden" value=""></div>
 </form>
 </body>
 </html>
