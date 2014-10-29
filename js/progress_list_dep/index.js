@@ -6,12 +6,16 @@ function getDeptCode() {
 
 function init() {
     var targetDept = getDeptCode();
-    render(targetDept);
+    var inline = false;
+    if ( targetDept.length == 1 ) {
+        inline = true;
+    }
+    render(targetDept, inline);
     renderDepList(targetDept[0].code, nextYear);
     event();
 }
 
-function render(targetDept) {
+function render(targetDept, inline) {
     var yearOptionValues = [];
     yearOptionValues.push(currentYear);
     yearOptionValues.push(nextYear);
@@ -24,6 +28,15 @@ function render(targetDept) {
         deptOptionValues.push(targetDept[i].code);
     }
     tag.renderSelect("deptList", deptOptionDisplay, deptOptionValues, targetDept[0].code);
+    if ( inline ) {
+        var target = targetDept[0];
+        jQuery("#deptTitleName_tr").show();
+        jQuery("#deptList_tr").hide();
+        jQuery("#deptTitleName").html(target.name);
+    } else {
+        jQuery("#deptTitleName_tr").hide();
+        jQuery("#deptList_tr").show();
+    }
 }
 
 function renderDepList(depId, year) {
@@ -40,7 +53,7 @@ function renderDepList(depId, year) {
         } else {
             result = tag.objToArray(result);
             _.each(result.document, function(customerItem, index) {
-                if(customerItem.item[2].value.id === "1"){
+                if(customerItem.item[3].value.id === "1"){
                     customsData.push(customerItem.item[0].value);
                     eval("documentsData['" + customerItem.item[0].value + "_Data']={};");
                 }
@@ -167,8 +180,6 @@ function getLastYearData(year, documentsData, customsData, depId) {
                         lastYearProfit += getParsedInt(strategy["profit"]);
                         tmpData["lastYearSales"]   = lastYearSales;
                         tmpData["lastYearProfit"]  = lastYearProfit;
-                        tmpData["increaseSales1"]  = getParsedInt(tmpData["currentYearSalesAB"]) - lastYearSales;
-                        tmpData["increaseProfit1"] = getParsedInt(tmpData["currentYearProfitAB"]) - lastYearProfit;
                         eval("documentsData['" + depItem.item[1].value + "_Data'] = tmpData;");
                     }
                 });
@@ -208,8 +219,6 @@ function getBudget(year, documentsData, customsData, depId){
                         lastYearBudgetProfit += getParsedInt(budgetObj["budget_sum_profit"]);
                         tmpData["lastYearBudgetSales"]  = lastYearBudgetSales;
                         tmpData["lastYearBudgetProfit"] = lastYearBudgetProfit;
-                        tmpData["increaseSales2"]  = getParsedInt(tmpData["currentYearSalesAB"]) - lastYearBudgetSales;
-                        tmpData["increaseProfit2"] = getParsedInt(tmpData["currentYearProfitAB"]) - lastYearBudgetProfit;
                         eval("documentsData['" + depItem.item[0].value + "_Data'] = tmpData;");
                     }
                 });
@@ -234,9 +243,21 @@ function getCustomName(year, documentsData, customsData, depId) {
                     }
                 }
             }
-            renderPage(year, documentsData, customsData, depId);
+            calculateIncrease(year, documentsData, customsData, depId);
         }
     });
+}
+
+function calculateIncrease(year, documentsData, customsData, depId) {
+    for ( var i = 0 ; i < customsData.length ; i++ ) {
+        var tmpCalData = eval('documentsData["' + customsData[i] + '_Data"]');
+        eval('tmpCalData["increaseSales1"] = getParsedInt(tmpCalData["currentYearSalesAB"]) - getParsedInt(tmpCalData["lastYearSales"]);');
+        eval('tmpCalData["increaseProfit1"] = getParsedInt(tmpCalData["currentYearProfitAB"]) - getParsedInt(tmpCalData["lastYearProfit"]);');
+        eval('tmpCalData["increaseSales2"] = getParsedInt(tmpCalData["currentYearSalesAB"]) - getParsedInt(tmpCalData["lastYearBudgetSales"]);');
+        eval('tmpCalData["increaseProfit2"] = getParsedInt(tmpCalData["currentYearProfitAB"]) - getParsedInt(tmpCalData["lastYearBudgetProfit"]);');
+        eval('documentsData["' + customsData[i] + '_Data"] = tmpCalData;');
+    }
+    renderPage(year, documentsData, customsData, depId);
 }
 
 function renderPage(year, documentsData, customsData, depId) {

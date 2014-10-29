@@ -38,24 +38,26 @@ jQuery(function () {
     var depIdsFromReq = "$depId";
     var global_groups = tag.global_groups;
     var tmpDepName = "";
-    if( depIdsFromReq === "") {
-        for (var i = 0 ; i < global_groups.length ; i++) {
+    var defaultDeptCode = "";
+    for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];   
             if (typeof(global_group) !== "undefined") {
                 deptName.push({"name":global_group[1]+" "+global_group[3]+" "+global_group[5]+" "+global_group[7],"code":global_group[6]});
             }
-        }
+    }
+    if( depIdsFromReq === "") {
+        defaultDeptCode = deptName[0].code;
     } else {
         for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];
             if (typeof(global_group) !== "undefined") {
                 if(depIdsFromReq.indexOf(global_group[6]) !== -1){
-                    deptName.push({"name":global_group[1]+" "+global_group[3]+" "+global_group[5]+" "+global_group[7],"code":global_group[6]});
+                    defaultDeptCode = global_group[6].code;
                 }
             }
         }
     }
-    init();
+    init(defaultDeptCode);
 });
 </script>
 
@@ -69,11 +71,17 @@ jQuery(function () {
             </select>@{[t_(' 年度')]}
         </td>
     </tr>
-    <tr>
+    <tr id="deptList_tr">
         <td align="right">@{[t_('　部門：')]}</td>
         <td align="left">
             <select id = "deptList" name="">
             </select>
+        </td>
+    </tr>
+    <tr id="deptTitleName_tr">
+        <td align="right">@{[t_('　部門：')]}</td>
+        <td align="left">
+           <span id="deptTitleName"></span>
         </td>
     </tr>
 </table>
