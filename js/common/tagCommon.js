@@ -89,6 +89,7 @@ var tag = {
   },
 
   doput: function(url_, data_, callback_) {
+  	data_['_method']='PUT';
     jQuery.ajax({
         url: url_
       , type: "POST"
@@ -524,7 +525,3 @@ var tag = {
 	
 	return result;
   },
-  
-  global_groups:[]
-};
-

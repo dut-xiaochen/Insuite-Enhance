@@ -241,7 +241,7 @@ function renderDepList(kyoKuId, year) {
 		
 		// もし、この部門のクライアントの「年度計画一覧表示」フラグは表示しない場合、集計しない
 		var mappingUrl = '/hibiki/rest/1/binders/custom_charge_group_master/views/allData/documents?charge_group=' 
-			+ depId + '&&list_flag=2&&random=' + date;
+			+ depId + '&&list_flag=2';
 		
 		// 表示しないクライアント一覧取得
 		tag.doget(mappingUrl, function(err, result) {			
@@ -255,7 +255,7 @@ function renderDepList(kyoKuId, year) {
 			
 			// 当年度　施策バインダからデータを取得
 			var url = '/hibiki/rest/1/binders/strategy_management/views/allData/documents?year=' 
-				+ year.toString() + '&&charge_group=' + depId + "&&random=" + date;
+				+ year.toString() + '&&charge_group=' + depId;
 			
 			// 今年データ取得　（施策バインダから）
 			tag.doget(url, function(err, result) {
@@ -313,7 +313,7 @@ function renderDepList(kyoKuId, year) {
 				
 				//　昨年度見通しデータ取得 (A+B+C)	　施策バインダから
 				url = '/hibiki/rest/1/binders/strategy_management/views/allData/documents?year=' 
-					+ (year-1).toString() + '&&charge_group=' + depId + "&&random=" + date;
+					+ (year-1).toString() + '&&charge_group=' + depId;
 				tag.doget(url, function(err, result) {
 					
 					result = tag.objToArray(result);
@@ -333,7 +333,7 @@ function renderDepList(kyoKuId, year) {
 					
 					// 昨年度予算データ取得　予定管理バインダから
 					url = '/hibiki/rest/1/binders/budget/views/allData/documents?year=' 
-						+ year.toString() + '&&charge_group=' + depId + "&&random=" + date;
+						+ year.toString() + '&&charge_group=' + depId;
 					tag.doget(url, function(err, result) {
 						
 						result = tag.objToArray(result);
@@ -605,4 +605,27 @@ function lineBackcolorChange(num,color,chk){
     document.getElementById(data11).className = bcolor;
     document.getElementById(data12).className = bcolor;
     document.getElementById(data15).className = bcolor;
-    document.getElementById(dat
+    document.getElementById(data16).className = bcolor;
+
+    if (chk == 'no') {
+    } else if ( chk == 'on' ) {
+        document.getElementById(data05).className = bcolor;
+        document.getElementById(data06).className = bcolor;
+        document.getElementById(data07).className = bcolor;
+        document.getElementById(data08).className = bcolor;
+        document.getElementById(data11).className = bcolor;
+        document.getElementById(data12).className = bcolor;
+        document.getElementById(data15).className = bcolor;
+        document.getElementById(data16).className = bcolor;
+    } else if ( chk == 'off' ) {
+        document.getElementById(data05).className = "backgroud_color1";
+        document.getElementById(data06).className = "backgroud_color1";
+        document.getElementById(data07).className = "backgroud_color2";
+        document.getElementById(data08).className = "backgroud_color2";
+        document.getElementById(data11).className = "backgroud_color3";
+        document.getElementById(data12).className = "backgroud_color3";
+        document.getElementById(data15).className = "backgroud_color4";
+        document.getElementById(data16).className = "backgroud_color4";
+    }
+    return;
+}

@@ -9,6 +9,7 @@ BEGIN {
 	use DA::Gettext;
 	use DA::IS;
 	use DA::Vars;
+	use DA::Ajax;
 	use Data::Dumper;
 }
 
@@ -45,6 +46,8 @@ sub get_params {
 	else{
 		$info = $info . "var mode = \"edit\";";	
 	}
+	$info = $info . 'var main_charger = "";';
+	$info = $info . 'var sel_user = {};';
 	return $info;
 }
 
@@ -74,7 +77,7 @@ sub get_open_select_user_win_script {
 	return $popup_tag;
 }
 
-sub get_select_user{
+sub get_selected_user{
 	my ($session,$query) = @_;
 	
 	if($query->param("retrieve") == "1"){
@@ -83,6 +86,21 @@ sub get_select_user{
 			$code = 1;
 		}
 		my $sc = DA::IS::get_data_parse($session,"@{[t_('クライアント施策 登録')]}",$query->param("strategy_code"));
+		my $user_sel = $sc->{USERSEL};
+		my $key;
+		my $result = {};
+		while( ($key, $_) = each %$user_sel ){
+			if(/:\d:(.*)\s/g){
+				$result->{$key} = $1;
+			}
+		}
+		$result = DA::Ajax::make_json($session,$result,"");
+		$result = "var sel_user = ". $result;
+		$result = $result . ";";
+		return $result;
+	}
+	else{
+		return "var sel_user = {};";
 	}
 }
 
@@ -125,6 +143,16 @@ my $open_select_user_func = get_open_select_user_win_script($session,$query);
 my $project_html = get_project_html($query);
 my $type_html = get_type_html($query);
 my $strategy_name_html = get_strategy_name_html($query);
+my $select_users = get_selected_user($session,$query);
+
+my $_DEBUG = 1;
+my $prefix = "";
+
+if($_DEBUG == 1) {
+	$prefix = rand(100000);
+} else {
+	$prefix = DA::IS::get_uri_prefix();
+}
 
 my $outbuf = <<buff_end;
 <html>
@@ -134,15 +162,15 @@ my $outbuf = <<buff_end;
 <meta http-equiv="Expires" content="0">
 <meta http-equiv="Cache-Control" content="no-cache">
 
-<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/UTF-8/normal_style.css">
-<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/plan-regist/plan-regist.css">
+<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/UTF-8/normal_style.css?$prefix">
+<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/plan-regist/plan-regist.css?$prefix">
 
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore-1.5.1.js"></script>
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore.string-2.3.2.js"></script>
-<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/common/popup.js"></script>
-<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js"></script>
-<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/plan-regist/index.js"></script>
+<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/common/popup.js?$prefix"></script>
+<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?$prefix"></script>
+<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/plan-regist/index.js?$prefix"></script>
 
 <title>@{[t_('クライアント施策 登録')]}</title>
 </head>
@@ -221,10 +249,10 @@ my $outbuf = <<buff_end;
         </tr>
         <tr>
             <td colspan="2" id="uri_day" style="display:none">
-                @{[t_('合計：')]}<span id="sales_sum_viewer">75,000</span><br>
-                  @{[t_('4月')]}<input type="text" name="strategy_sales_m4" value="" size="5">  @{[t_('7月')]}<input type="text" name="strategy_sales_m7" value="" size="5">  @{[t_('10月')]}<input type="text" name="strategy_sales_m10" value="" size="5">  @{[t_('1月')]}<input type="text" name="strategy_sales_m1" value="" size="5"><br>
-                  @{[t_('5月')]}<input type="text" name="strategy_sales_m5" value="" size="5">  @{[t_('8月')]}<input type="text" name="strategy_sales_m8" value="" size="5">  @{[t_('11月')]}<input type="text" name="strategy_sales_m11" value="" size="5">  @{[t_('2月')]}<input type="text" name="strategy_sales_m2" value="" size="5"><br>
-                  @{[t_('6月')]}<input type="text" name="strategy_sales_m6" value="" size="5">  @{[t_('9月')]}<input type="text" name="strategy_sales_m9" value="" size="5">  @{[t_('12月')]}<input type="text" name="strategy_sales_m12" value="" size="5">  @{[t_('3月')]}<input type="text" name="strategy_sales_m3" value="" size="5">
+                @{[t_('合計：')]}<span id="sales_sum_viewer"></span><br>
+                  @{[t_('4月')]}<input type="text" name="strategy_sales_m4" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('7月')]}<input type="text" name="strategy_sales_m7" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('10月')]}<input type="text" name="strategy_sales_m10" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('1月')]}<input type="text" name="strategy_sales_m1" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()"><br>
+                  @{[t_('5月')]}<input type="text" name="strategy_sales_m5" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('8月')]}<input type="text" name="strategy_sales_m8" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('11月')]}<input type="text" name="strategy_sales_m11" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('2月')]}<input type="text" name="strategy_sales_m2" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()"><br>
+                  @{[t_('6月')]}<input type="text" name="strategy_sales_m6" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('9月')]}<input type="text" name="strategy_sales_m9" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('12月')]}<input type="text" name="strategy_sales_m12" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">  @{[t_('3月')]}<input type="text" name="strategy_sales_m3" value="" size="5" onkeyup="checkNum(this)" onblur="setSalesSumViewer()">
             </td>
         </tr>
         <tr>
@@ -238,10 +266,10 @@ my $outbuf = <<buff_end;
         </tr>
         <tr>
             <td colspan="2" id="rieki_day" style="display:none">
-                @{[t_('合計：')]}<span id="profit_sum_viewer">75,000</span><br>
-                  @{[t_('4月')]}<input type="text" name="strategy_profit_m4" value="" size="5">  @{[t_('7月')]}<input type="text" name="strategy_profit_m7" value="" size="5">  @{[t_('10月')]}<input type="text" name="strategy_profit_m10" value="" size="5">  @{[t_('1月')]}<input type="text" name="strategy_profit_m1" value="" size="5"><br>
-                  @{[t_('5月')]}<input type="text" name="strategy_profit_m5" value="" size="5">  @{[t_('8月')]}<input type="text" name="strategy_profit_m8" value="" size="5">  @{[t_('11月')]}<input type="text" name="strategy_profit_m11" value="" size="5">  @{[t_('2月')]}<input type="text" name="strategy_profit_m2" value="" size="5"><br>
-                  @{[t_('6月')]}<input type="text" name="strategy_profit_m6" value="" size="5">  @{[t_('9月')]}<input type="text" name="strategy_profit_m9" value="" size="5">  @{[t_('12月')]}<input type="text" name="strategy_profit_m12" value="" size="5">  @{[t_('3月')]}<input type="text" name="strategy_profit_m3" value="" size="5">
+                @{[t_('合計：')]}<span id="profit_sum_viewer"></span><br>
+                  @{[t_('4月')]}<input type="text" name="strategy_profit_m4" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('7月')]}<input type="text" name="strategy_profit_m7" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('10月')]}<input type="text" name="strategy_profit_m10" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('1月')]}<input type="text" name="strategy_profit_m1" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()"><br>
+                  @{[t_('5月')]}<input type="text" name="strategy_profit_m5" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('8月')]}<input type="text" name="strategy_profit_m8" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('11月')]}<input type="text" name="strategy_profit_m11" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('2月')]}<input type="text" name="strategy_profit_m2" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()"><br>
+                  @{[t_('6月')]}<input type="text" name="strategy_profit_m6" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('9月')]}<input type="text" name="strategy_profit_m9" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('12月')]}<input type="text" name="strategy_profit_m12" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">  @{[t_('3月')]}<input type="text" name="strategy_profit_m3" value="" size="5" onkeyup="checkNum(this)" onblur="setProfitSumViewer()">
             </td>
         </tr>
         <tr>
@@ -306,6 +334,7 @@ my $outbuf = <<buff_end;
 		cgiRdir: '/cgi-bin'
 	};
 	$params
+	$select_users
 	function openSelectUserWin(){
 		$open_select_user_func;
 	}

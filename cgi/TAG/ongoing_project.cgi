@@ -52,7 +52,6 @@ var continueDataList = [];
 var lock = false;
 var err_system_msg = "$err_system_msg";
 var err_double_click_msg = "$err_double_click_msg";
-var date = new Date().getTime();
 </script>
 
 <h2>@{[t_('·ÑÂ³»ÜºöÅÐÏ¿')]}</h2>
@@ -143,21 +142,30 @@ buff_end
 }
 
 sub print_head {	
-	my $random = rand(100000);
+
+	my $_DEBUG = 1;
+	my $prefix = "";
+	
+	if($_DEBUG == 1) {
+		$prefix = rand(100000);
+	} else {
+		$prefix = DA::IS::get_uri_prefix();
+	}
+	
 	my @include_css = ();
 	push @include_css,
-		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/style_tag.css?random=$random"">|,
-		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/UTF-8/normal_style.css?random=$random">|;
+		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/style_tag.css?$prefix">|,
+		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/UTF-8/normal_style.css?$prefix">|;
 		
 	my @include_js = ();
 	push @include_js,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore-1.5.1.js"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore.string-2.3.2.js"></script>|,
-		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?random=$random"></script>|,
+		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?$prefix"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/async.js"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/encoding.js"></script>|,
-		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/ongoing_project/index.js?random=$random"></script>|;
+		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/ongoing_project/index.js?$prefix"></script>|;
 		
 my $head = <<buf_end;
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -176,6 +184,7 @@ my $head = <<buf_end;
     .blk,.blk:visited {color: black}
     .sel,.sel:visited {color: a90a08; font-weight: bold}
     .title,.title:visited {color: white}
+    body {line-height: 200%}
 //--></STYLE>
 <script language="JavaScript"><!--
 //--></script>

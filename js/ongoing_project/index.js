@@ -10,7 +10,7 @@ function init() {
 function render() {
 	// 施策一覧取得
 	var url = '/hibiki/rest/1/binders/strategy_management/views/allData/documents?year=' 
-		+ year.toString() + '&&charge_group=' + depId + "&&customer_code=" + customer_code + "&&random=" + date;
+		+ year.toString() + '&&charge_group=' + depId + "&&customer_code=" + customer_code;
 	var dataList = [];
 	
 	tag.doget(url, function(err, result) {
@@ -98,7 +98,6 @@ function event() {
 		var updateUrl = '/hibiki/rest/1/binders/strategy_management/documents/';
 
 		async.eachSeries(continueDataList, function(depItem, doEach) {
-			
 			tag.dopost(updateUrl, depItem, function(err, result) {
 				doEach(err);
 			});
@@ -113,33 +112,6 @@ function event() {
 				
 				// 営業一覧計画シートに遷移
 				goToPlan();
-				
-//				var addLength = continueDataList.length;
-//				
-//				// 既存通番取得
-//				var url = '/hibiki/rest/1/binders/increase_binder/views/allData/documents?year=' 
-//					+ (parseInt(year)+1).toString() + '&&type=1';
-//				
-//				tag.doget(url, function(err, result) {
-//					if (err) {
-//						alert("システムエラー発生しまいました！");
-//					}
-//					var currentObj = tag.createIncrease(result.document);
-//					var currentNo = currentObj["number"];	
-//					var updateNo = tag.padLeft(parseInt(currentNo) + addLength);
-//					
-//					// 自動採番バインダ更新
-//					var updateUrl = '/hibiki/rest/1/binders/increase_binder/documents/' + currentObj.id;
-//					tag.doput(updateUrl, {"number":updateNo , _method:'PUT'}, function (err, result) {
-//						if (err) {
-//							alert("システムエラー発生しまいました！");
-//							return;
-//						}
-//						// 営業一覧計画シートに遷移
-//						goToPlan();
-//					});
-//					
-//				});
 			}
 		});
 		
@@ -238,4 +210,8 @@ function changeCheckBox(num){
     if( myid.checked == true ) {
         lineBackcolorChange(num,'gray','on');
     } else if ( num % 2 == 0 ) {
-        lineBackcolorChange(num,
+        lineBackcolorChange(num,'white','off');
+    } else {
+        lineBackcolorChange(num,'gray2','off');
+    }
+}

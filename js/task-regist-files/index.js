@@ -55,13 +55,22 @@ function init_data() {
 //	});
 	
 	//　新規
-	tag.dopost("/hibiki/rest/1/binders/test_binder/documents/", {"test_key" :"test_key...."}, function(err, result) {
+	var url = '/hibiki/rest/1/binders/strategy_management/views/allData/documents?year=2014';
+	var updUrl = '/hibiki/rest/1/binders/strategy_management/documents/275';
+	
+	tag.doget(url, function(err,result) {
 		console.log(result);
-		if (err) {
-			alert("Error");
-			return;
-		}
+		
+		tag.doput(updUrl, {"other_charger" :"1000060\n1000061"}, function(err, result) {
+			console.log(result);
+			if (err) {
+				alert("Error");
+				return;
+			}
+		});
 	});
+	
+	
 	
 //	//　更新
 //	tag.doput("/hibiki/rest/1/binders/10061/documents/7", {10002:"お疲れ様です。.", _method:'PUT'}, function (err, result) {
@@ -71,11 +80,4 @@ function init_data() {
 }
 
 function events() {
-	var msgList = ["閉じるボタンクリック","保存ボタンクリック"];
-	jQuery("#closeBtn").click(function(e) {
-		alert(jQuery("#closeBtn").val() + msgList[0]);
-	});
-	jQuery("#saveBtn").click(function(e) {
-		alert(jQuery("#saveBtn").val() + msgList[1]);
-	});
-}
+	var msgList = ["閉じるボタンクリック","保存

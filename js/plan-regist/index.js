@@ -1,3 +1,15 @@
+function checkNum(obj) {
+     if (isNaN(obj.value)) {
+         obj.value = "";
+     }
+     if (obj != null) {
+         if (obj.value.toString().split(".").length > 1 && obj.value.toString().split(".")[1].length > 2) {
+             //alert("小数点后多于两位！");
+             obj.value = "";
+         }
+     }
+ }
+
 function detailAmount(id){
     var obj = document.getElementById(id);
     if (obj.style.display == "block") {
@@ -88,11 +100,28 @@ function getStrategyProject(){
 }
 
 function setStrategyCharger(value){
-	jQuery('#strategy_charger').html('<img src="/images/ja/custom/TAG/ico_fc_user.png" align="absmiddle" /><a href="#" onclick="">'+ value.name + '</a>');
+	if(value.id){
+		main_charger = value.id;
+		sel_user[value.id] = value.name;
+	}
+	//console.log('main_charger',value);
 }
 
 function getStrategyCharger(){
 	
+}
+
+function setStrategyOtherCharger(value){
+	//console.log('other_charger',value);
+	_.each(value,function(item){
+		sel_user[item.id] = item.name;
+	});
+	createRadioFromSelUser();
+	initChargerStar();
+}
+
+function getStrategyOtherCharger(){
+
 }
 
 function setStrategySales(sales){
@@ -104,7 +133,8 @@ function getStrategySales(){
 }
 
 function setStrategyMonthSales(month,sales){
-	jQuery('input[name=strategy_sales_m' + month + ']').val(tag.addCommas(sales));
+	var node = 'input[name=strategy_sales_m' + month + ']';
+	jQuery(node).val(sales);
 }
 
 function getStrategyMonthSales(month){
@@ -120,23 +150,40 @@ function getStrategyProfit(){
 }
 
 function setStrategyMonthProfit(month,profit){
-	jQuery('input[name=strategy_profit_m' + month + ']').val(tag.addCommas(profit));
+	var node = 'input[name=strategy_profit_m' + month + ']';
+	jQuery(node).val(profit);
 }
 
 function getStrategyMonthProfit(month){
 	return jQuery('input[name=strategy_profit_m' + month + ']').val();
 }
 
-function setSalesSumViewer(value){
-	jQuery('#sales_sum_viewer').text(tag.addCommas(value));
+function setSalesSumViewer(){
+	var sum = 0;
+	for(var month = 1; month < 13; month++){
+		var value = getStrategyMonthSales(month);
+		value = parseInt(value);
+		if(!isNaN(value)){
+			sum += value;
+		}
+	}
+	jQuery('#sales_sum_viewer').text(tag.addCommas(sum));
 }
 
 function getSalesSumViewer(){
 	return jQuery('#sales_sum_viewer').text();
 }
 
-function setProfitSumViewer(value){
-	jQuery('#profit_sum_viewer').text(tag.addCommas(value));
+function setProfitSumViewer(){
+	var sum = 0;
+	for(var month = 1; month < 13; month++){
+		var value = getStrategyMonthProfit(month);
+		value = parseInt(value);
+		if(!isNaN(value)){
+			sum += value;
+		}
+	}
+	jQuery('#profit_sum_viewer').text(tag.addCommas(sum));
 }
 
 function getProfitSumViewer(){
@@ -243,6 +290,9 @@ function setStrategyContent(content){
 		else if(item.key == "main_charger"){
 			setStrategyCharger(item.value);
 		}
+		else if(item.key == "other_charger"){
+			setStrategyOtherCharger(item.value);
+		}
 		else if(item.key == "sales"){
 			setStrategySales(item.value);
 		}
@@ -269,6 +319,8 @@ function setStrategyContent(content){
 			var month = item.key.substring(7,item.key.length);
 			setStrategyMonthProfit(month,item.value);
 		}
+		setSalesSumViewer();
+		setProfitSumViewer();
 	});
 }
 
@@ -305,4 +357,137 @@ function getStrategyJSONFromView(){
 		result[key] = value;
 	}
 	
-	return re
+	return result;
+}
+
+function setStrategyFromJSON(data){
+	setStrategyCode(data.strategy_code);
+	setStrategyProperty(data.property);
+	setStrategyProject(data.project);
+	setStrategyType(data.type);
+	setStrategyName(data.strategy_name);
+	setStrategyCustomerName(data.customer_name);
+	setStrategyClientKey(data.client_key);
+	setStrategyCharger(data.main_charger);
+	setStrategySales(data.sales);
+	setStrategyProfit(data.profit);
+	setStrategyPeriod2(data.period2);
+	setStrategyPeriod3(data.period3);
+	setStrategyPeriod4(data.period4);
+	setStrategyAccurcy(data.accurcy);
+	setStrategyMemo(data.memo);
+	setCreatedDate(data.created_date);
+	setUpdatedDate(data.updated_date);
+	
+	var key = "";
+	var value = "";
+	for(var month = 1; month < 13; month++){
+		key = "sales_" + month.toString();
+		value = data[key];
+		setStrategyMonthSales(month,value);
+		
+		key = "profit_" + month.toString();
+		value = data[key];
+		setStrategyMonthProfit(month,value);
+	}
+	setSalesSumViewer();
+	setProfitSumViewer();
+}
+
+function getStrategyInfoByCode(code){
+	var url = '/hibiki/rest/1/binders/strategy_management/views/10001/documents?strategy_code=' + code;
+	
+	tag.doget(url,function(err,result){
+		if(err){
+			return;
+		}
+		setStrategyContent(result);
+		testGetValue();
+	});
+}
+
+jQuery(function(){
+	if(retrieve == 0){
+		if(strategy_code != -1){
+			getStrategyInfoByCode(strategy_code);
+		}
+		else{
+		}
+	}
+	else{
+		retrieveInfoFromServerTmpFile();
+	}
+});
+
+function backupInfoInServerTmpFile(){
+	var info = getStrategyJSONFromView();
+
+	tag.dopost('/cgi-bin/custom/TAG/cache-plan-regist.cgi',JSON.stringify(info),function(err,data){
+		if(err){
+			console.log('errr-post!',err);
+		}
+		else{
+
+			console.log(data);
+		}
+	});
+}
+
+function retrieveInfoFromServerTmpFile(){
+	tag.doget('/cgi-bin/custom/TAG/cache-plan-regist.cgi?1',function(err,data){
+		if(err){
+			return;
+		}
+		setStrategyFromJSON(data.data);
+					
+	});
+}
+
+function onSelectUser(){
+	backupInfoInServerTmpFile();
+	openSelectUserWin();
+}
+
+function insertOrUpdateStrategy(){
+	if(tag.strategy_code == -1){
+		insertStrategy();
+	}
+	else{
+		updateStrategy();
+	}
+}
+
+function insertStrategy(){
+	
+}
+
+function updateStrategy(){
+	
+}
+
+function testGetValue(){
+	console.log("testGetValueStart");
+	console.log(getStrategyJSONFromView());
+	console.log("testGetValueEnd");
+}
+
+function changeMainCharger(value){
+	jQuery('#star_' + main_charger ).html('');
+	jQuery('#star_' + value).html('<img id="star" src="/images/ja/custom/TAG/parts_hd16_053.gif" width="14" height="14" align="absmiddle" border=0>');
+	main_charger = value;
+}
+
+function createRadioFromSelUser(){
+	var html = '';
+	_.each(sel_user,function(value,key){
+		html += '<input type="radio" name="main_charger" value="' + key +'" onchange="changeMainCharger(this.value)"><img src="/images/ja/custom/TAG/ico_fc_user.png" title="一般ユーザ" align="absmiddle"/>';
+		html += '<a href="#" onclick="#">' + value +'</a><span id="star_' + key +'"></span><br>';
+	});
+	jQuery('#strategy_charger').html(html);
+}
+
+function initChargerStar(){
+	jQuery('input[value=' + main_charger + ']').attr('checked','true');
+	jQuery('#star_' + main_charger ).html('<img id="star" src="/images/ja/custom/TAG/parts_hd16_053.gif" width="14" height="14" align="absmiddle" border=0>');
+}
+

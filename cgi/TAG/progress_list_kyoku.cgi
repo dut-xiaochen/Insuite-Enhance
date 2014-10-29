@@ -212,24 +212,31 @@ buff_end
 }
 
 sub print_head {
-	my $date = getTime();  
-	my $currentYear = $date->{year};
+	my $currentYear = DA::CGIdef::get_date('Y4');
 	
-	my $random = rand(100000);
+	my $_DEBUG = 1;
+	my $prefix = "";
+	
+	if($_DEBUG == 1) {
+		$prefix = rand(100000);
+	} else {
+		$prefix = DA::IS::get_uri_prefix();
+	}
+	
 	my @include_css = ();
 	push @include_css,
-		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/style_tag.css?random=$random">|,
-		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/UTF-8/normal_style.css?random=$random">|;
+		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/style_tag.css?$prefix">|,
+		qq|<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/UTF-8/normal_style.css?$prefix">|;
 		
 	my @include_js = ();
 	push @include_js,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore-1.5.1.js"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore.string-2.3.2.js"></script>|,
-		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?random=$random"></script>|,
+		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?$prefix"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/async.js"></script>|,
 		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/encoding.js"></script>|,
-		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/progress_list_kyoku/index.js?random=$random"></script>|;
+		qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/progress_list_kyoku/index.js?$prefix"></script>|;
 		
 my $head = <<buf_end;
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -262,27 +269,3 @@ buf_end
 
 return ($head);
 }
-
-sub getTime {
-	my $time = shift || time();
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime($time);
-    $year += 1900;
-    $mon ++;
-    $min  = '0'.$min  if length($min)  < 2;
-    $sec  = '0'.$sec  if length($sec)  < 2;
-    $mon  = '0'.$mon  if length($mon)  < 2;
-    $mday = '0'.$mday if length($mday) < 2;
-    $hour = '0'.$hour if length($hour) < 2;
-    my $weekday = ('Sun','Mon','Tue','Wed','Thu','Fri','Sat')[$wday];
-        return { 'second' => $sec,
-                 'minute' => $min,
-                 'hour'   => $hour,
-                 'day'    => $mday,
-                 'month'  => $mon,
-                 'year'   => $year,
-                 'weekNo' => $wday,
-                 'wday'   => $weekday,
-                 'yday'   => $yday,
-                 'date'   => "$year-$mon-$mday"
-              };
-    }

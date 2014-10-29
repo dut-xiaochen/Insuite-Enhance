@@ -302,8 +302,8 @@ function convertToContinueStrategy(strategy,pre_year_data){
         create_date:strategy.create_date,
         update_date:strategy.update_date
 	};
-	
-	var pre = pre_year_data["pre_year_data"][result.strategy_code.substring(4,result.strategy_code.length)];
+	var key = createKeyFromCode(result.strategy_code);
+	var pre = pre_year_data["pre_year_data"][key];
 	
 	if(pre){
 		result.main_charger = pre.main_charger;
@@ -351,6 +351,15 @@ function convertToChallengeStragegy(strategy){
 	return result;
 }
 
+function trim(str){   
+    return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');   
+}  
+
+function createKeyFromCode(code){
+	code = trim(code);
+	return code.substring(4,code.length);
+}
+
 function getPreYearData(year,custom_code,charge_group_code){
 	
 	var url = '/hibiki/rest/1/binders/strategy_management/views/10001/documents?year=' 
@@ -366,9 +375,12 @@ function getPreYearData(year,custom_code,charge_group_code){
 		r["sales_sum_of_A_plus_B"] = 0;
 		r["profit_sum_of_A_plus_B"] = 0;
 		
+		result = tag.objToArray(result);
+		
 		_.each(result.document,function(doc){
 			var strategy = createStrategy(doc);
-			r["pre_year_data"][strategy.strategy_code.substring(4,strategy.strategy_code.length)] = strategy;
+			var key = createKeyFromCode(strategy.strategy_code);
+			r["pre_year_data"][key] = strategy;
 			if(strategy["accurcy"] == "A"){
 				r["sales_sum_of_A_plus_B"] += parseInt(strategy["sales"]);
 				r["profit_sum_of_A_plus_B"] += parseInt(strategy["profit"]);
@@ -412,6 +424,8 @@ function getThisYearData(year,custom_code,charge_group_code,pre_year_data){
 		var continue_strategy = [];
 		var new_strategy = [];
 		var challenge_strategy = [];
+		
+		result = tag.objToArray(result);
 		
 		_.each(result.document,function(doc){
 			var strategy = createStrategy(doc);
@@ -522,4 +536,5 @@ function makePlan(type){
 }
 
 function editPlan(id){
-	window.ope
+	window.open("/cgi-bin/custom/TAG/plan-regist.cgi?strategy_code="+id);
+}

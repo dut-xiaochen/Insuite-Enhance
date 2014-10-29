@@ -59,6 +59,15 @@ DA::Valid::check_param_all( $session, $query );
 
 my $get_param = get_params($query);
 
+my $_DEBUG = 1;
+my $prefix = "";
+
+if($_DEBUG == 1) {
+	$prefix = rand(100000);
+} else {
+	$prefix = DA::IS::get_uri_prefix();
+}
+
 my $outbuf = <<buff_end;
 <html>
 <head>
@@ -67,14 +76,14 @@ my $outbuf = <<buff_end;
 	<meta http-equiv="Expires" content="0">
 	<meta http-equiv="Cache-Control" content="no-cache">
 
-	<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/UTF-8/normal_style.css">
-	<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/plan/plan.css">
+	<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/UTF-8/normal_style.css?$prefix">
+	<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/plan/plan.css?$prefix">
 
 	<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>
 	<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore-1.5.1.js"></script>
 	<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore.string-2.3.2.js"></script>
-	<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js"></script>
-	<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/plan/index.js"></script>
+	<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?$prefix"></script>
+	<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/plan/index.js?$prefix"></script>
 
 	<title>@{[t_('営業年度計画シート')]}</title>
 </head>
