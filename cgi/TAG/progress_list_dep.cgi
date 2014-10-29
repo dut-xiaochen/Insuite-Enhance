@@ -27,6 +27,7 @@ DA::Valid::check_param_all( $session, $query );
 my $head_print = &print_head;
 my $conf_file = DA::IS::get_sys_custom($session,"addon/TAG/tag_addon");
 my $groups_script = DA::Addon::TAG::TPermission::get_group($session,$conf_file);
+my $primay_group = DA::Addon::TAG::TPermission::get_primary_group($session);
 my $depId = $query->param("depId");
 
 my $outbuf =<<buff_end;
@@ -46,7 +47,7 @@ jQuery(function () {
             }
     }
     if( depIdsFromReq === "") {
-        defaultDeptCode = deptName[0].code;
+        defaultDeptCode = '$primay_group';
     } else {
         for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];
