@@ -51,16 +51,18 @@ jQuery(function () {
     var tmpDepName = "";
     if( depIdsFromReq === "") {
         for (var i = 0 ; i < global_groups.length ; i++) {
-            var global_group = global_groups[i];
-            if(depIdsFromReq.indexOf(global_group[6])){
+            var global_group = global_groups[i];   
+            if (typeof(global_group) !== "undefined") {
                 deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
             }
         }
     } else {
         for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];
-            if(depIdsFromReq.indexOf(global_group[6]) !== -1){
-                deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+            if (typeof(global_group) !== "undefined") {
+                if(depIdsFromReq.indexOf(global_group[6]) !== -1){
+                    deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+                }
             }
         }
     }

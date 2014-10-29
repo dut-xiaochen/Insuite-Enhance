@@ -48,7 +48,7 @@ function renderDepList(depId, year) {
                 }
             });
                               
-            tag.doget("/hibiki/rest/1/binders/strategy_management/views/10001/documents?charge_group=" + depId + "&year=" + year,function(err, result){
+            tag.doget("/hibiki/rest/1/binders/strategy_management/views/allData/documents?charge_group=" + depId + "&year=" + year,function(err, result){
                 if (err) {
                     jQuery("#message_comment").text(err);
                 } else {
@@ -139,7 +139,7 @@ function renderDepList(depId, year) {
 }
 
 function getLastYearData(year, documentsData, customsData, depId) {
-    tag.doget("/hibiki/rest/1/binders/strategy_management/views/10001/documents?charge_group=" + depId + "&year=" + (year-1),function(err, result){
+    tag.doget("/hibiki/rest/1/binders/strategy_management/views/allData/documents?charge_group=" + depId + "&year=" + (year-1),function(err, result){
         if (err) {
             jQuery("#message_comment").text(err);
         } else {
@@ -181,7 +181,7 @@ function getLastYearData(year, documentsData, customsData, depId) {
 }
 
 function getBudget(year, documentsData, customsData, depId){
-    var url = '/hibiki/rest/1/binders/budget/views/10001/documents?year=' + (year - 1) + '&charge_group=' + depId;
+    var url = '/hibiki/rest/1/binders/budget/views/allData/documents?year=' + (year - 1) + '&charge_group=' + depId;
     tag.doget(url, function(err, result) {
         if (err) {
             jQuery("#message_comment").text(err);
@@ -222,7 +222,7 @@ function getBudget(year, documentsData, customsData, depId){
 }
 
 function getCustomName(year, documentsData, customsData, depId) {
-    var url = '/hibiki/rest/1/binders/custom_master/views/10001/documents';
+    var url = '/hibiki/rest/1/binders/custom_master/views/allData/documents?1';
     tag.doget(url, function(err, result) {
         if (err) {
             jQuery("#message_comment").text(err);
