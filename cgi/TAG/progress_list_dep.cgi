@@ -24,25 +24,13 @@ my $session = {};
 DA::Session::get_dir( $session, $r );
 my $query = Apache::Request->new( $r, TEMP_DIR => "$session->{temp_dir}" );
 DA::Valid::check_param_all( $session, $query );
-my $random = rand(100000);
 my $head_print = &print_head;
 my $conf_file = DA::IS::get_sys_custom($session,"addon/TAG/tag_addon");
 my $groups_script = DA::Addon::TAG::TPermission::get_group($session,$conf_file);
 my $depId = $query->param("depId");
 
-
-my @include_js = ();
-    push @include_js,
-        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>|,
-        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore-1.5.1.js"></script>|,
-        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore.string-2.3.2.js"></script>|,
-        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?random=$random"></script>|,
-        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/async.js"></script>|,
-        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/encoding.js"></script>|,
-        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/progress_list_dep/index.js"></script>|;  
 my $outbuf =<<buff_end;
 $head_print
-@include_js
 <body>
 <script type="text/javascript">$groups_script</script>
 <script type="text/javascript">
@@ -224,11 +212,11 @@ jQuery(function () {
 </p>
 
 <form id="form" method="post">
-<div id="year" name="year" type="hidden" value=""></div>
-<div id="depId" name="depId" type="hidden" value=""></div>
-<div id="depName" name="depName" type="hidden" value=""></div>
-<div id="customer_code" name="customer_code" type="hidden" value=""></div>
-<div id="customer_name" name="customer_name" type="hidden" value=""></div>
+<input id="year" name="year" type="hidden" value="">
+<input id="depId" name="depId" type="hidden" value="">
+<input id="depName" name="depName" type="hidden" value="">
+<input id="customer_code" name="customer_code" type="hidden" value="">
+<input id="customer_name" name="customer_name" type="hidden" value="">
 </form>
 </body>
 </html>
@@ -244,15 +232,35 @@ buff_end
 sub print_head {
 my $date = getTime();  
 my $currentYear = $date->{year};
+
+my $_DEBUG = 1;
+my $prefix = "";
+
+if($_DEBUG == 1) {
+	$prefix = rand(100000);
+} else {
+	$prefix = DA::IS::get_uri_prefix();
+}
+
+my @include_js = ();
+    push @include_js,
+        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>|,
+        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore-1.5.1.js"></script>|,
+        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore.string-2.3.2.js"></script>|,
+        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?$prefix"></script>|,
+        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/async.js"></script>|,
+        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/encoding.js"></script>|,
+        qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/progress_list_dep/index.js?$prefix"></script>|;  
+
 my $head = <<buff_end;
 <html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta http-equiv="Cache-Control" content="no-cache">
-<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/style_tag.css">
-<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/UTF-8/normal_style.css">
-
+<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/custom/TAG/progress_list/style_tag.css?$prefix">
+<link rel="stylesheet" type="text/css" href="$DA::Vars::p->{css_rdir}/UTF-8/normal_style.css?$prefix">
+@include_js
 <STYLE type="text/css"><!--
     input,textarea { ime-mode: active }
 

@@ -179,7 +179,7 @@ function getLastYearData(year, documentsData, customsData, depId) {
 }
 
 function getBudget(year, documentsData, customsData, depId){
-    var url = '/hibiki/rest/1/binders/budget/views/allData/documents?year=' + (year - 1) + '&charge_group=' + depId;
+    var url = '/hibiki/rest/1/binders/budget/views/allData/documents?year=' + (year) + '&charge_group=' + depId;
     tag.doget(url, function(err, result) {
         if (err) {
             jQuery("#message_comment").text(err);
