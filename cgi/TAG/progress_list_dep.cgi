@@ -52,7 +52,7 @@ jQuery(function () {
             var global_group = global_groups[i];
             if (typeof(global_group) !== "undefined") {
                 if(depIdsFromReq.indexOf(global_group[6]) !== -1){
-                    defaultDeptCode = global_group[6].code;
+                    defaultDeptCode = global_group[6];
                 }
             }
         }
@@ -183,8 +183,8 @@ jQuery(function () {
                 <td id="number_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;">{{id}}</td>
                 <td id="chketc_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=checkbox id="chkbox_{{id}}" disabled="true"></td>
                 <td id="client_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:left;">{{deptName}}</td>
-                <td id="yrplan_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button value="{{buttonType}}" onclick='{{buttonClick}}'></td>
-                <td id="action_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button value="{{buttonType}}" disabled="true" onclick=""></td>
+                <td id="yrplan_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button style="color:{{buttonColor}};" value="{{buttonType}}" onclick='{{buttonClick}}'></td>
+                <td id="action_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:center;"><input type=button style="color:{{buttonColor}};" value="{{buttonType}}" disabled="true" onclick=""></td>
                 <td id="data01_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{currentYearSalesA_color}}">{{currentYearSalesA}}</font></td>
                 <td id="data02_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{currentYearProfitA_color}}">{{currentYearProfitA}}</font></td>
                 <td id="data03_{{id}}" onmouseover="lineOver('{{id}}')" onmouseout="lineOut('{{id}}','{{rowStyle}}')" style="text-align:right;"><font color="{{currentYearSalesB_color}}">{{currentYearSalesB}}</font></td>

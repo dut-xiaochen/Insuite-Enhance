@@ -4,18 +4,18 @@ function getDeptCode() {
     return deptName;
 }
 
-function init() {
+function init(defaultDeptCode) {
     var targetDept = getDeptCode();
     var inline = false;
     if ( targetDept.length == 1 ) {
         inline = true;
     }
-    render(targetDept, inline);
-    renderDepList(targetDept[0].code, nextYear);
+    render(targetDept, inline, defaultDeptCode);
+    renderDepList(defaultDeptCode, nextYear);
     event();
 }
 
-function render(targetDept, inline) {
+function render(targetDept, inline, defaultDeptCode) {
     var yearOptionValues = [];
     yearOptionValues.push(currentYear);
     yearOptionValues.push(nextYear);
@@ -27,7 +27,7 @@ function render(targetDept, inline) {
         deptOptionDisplay.push(targetDept[i].name);
         deptOptionValues.push(targetDept[i].code);
     }
-    tag.renderSelect("deptList", deptOptionDisplay, deptOptionValues, targetDept[0].code);
+    tag.renderSelect("deptList", deptOptionDisplay, deptOptionValues, defaultDeptCode);
     if ( inline ) {
         var target = targetDept[0];
         jQuery("#deptTitleName_tr").show();
@@ -372,6 +372,7 @@ function renderPage(year, documentsData, customsData, depId) {
             increaseSales2_color:increaseSales2 >= 0 ? "black" : "red",
             increaseProfit2_color:increaseProfit2 >= 0 ? "black" : "red",
             buttonType:isDocumentsDataExists(documentsData, customsData[i]) ? "編集" : "作成",
+            buttonColor:isDocumentsDataExists(documentsData, customsData[i]) ? "black" : "red",
             buttonClick:getButtonScripts(documentsData, customsData[i])
         });
         container.append(content);
@@ -455,7 +456,7 @@ function submitForm(customCode, customName, type) {
     var form = jQuery("#form");
     if ( type === "ongoing" ) {
         form.attr("action", "/cgi-bin/custom/TAG/ongoing_project.cgi");
-        jQuery("#year").val(nextYear);
+        jQuery("#year").val(parseInt(nextYear) -1);
         jQuery("#depId").val(jQuery("#deptList option:selected").val());
         jQuery("#depName").val(jQuery("#deptList option:selected").text());
         jQuery("#customer_code").val(customCode);
