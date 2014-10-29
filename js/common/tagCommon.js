@@ -123,6 +123,10 @@ var tag = {
   },
 
   doget: function(url_, callback_) {
+	
+	// IE10 Ajaxキャッシュ対応
+	url_ += "&&random=" + new Date().getTime();
+	
     jQuery.ajax({
         type: "GET"
       , url: url_
@@ -198,8 +202,11 @@ var tag = {
 	  
 	  if (!_.isUndefined(doc)) {
 		  _.each(doc["item"],function(item){
-				if(item["key"] == "number"){
-					result["number"] = item["value"];
+				if(item["key"] == "auto_number"){
+					result["auto_number"] = item["value"];
+					
+				} else if(item["key"] == "number_type"){
+					result["number_type"] = item["value"];
 				}
 			}); 
 	  }
@@ -371,4 +378,153 @@ var tag = {
 				result["profit_9"] = item["value"];
 			}
 			else if(item["key"] == "profit_10"){
-				result["profit_10"] = item["value
+				result["profit_10"] = item["value"];
+			}
+			else if(item["key"] == "profit_11"){
+				result["profit_11"] = item["value"];
+			}
+			else if(item["key"] == "profit_12"){
+				result["profit_12"] = item["value"];
+			}
+			
+		});
+	}
+	
+	return result;
+  },
+  
+  addCommas: function(nStr){
+    if (typeof(nStr) === "undefined") {
+      nStr = "0";
+    }
+	  nStr += '';
+	  var x = nStr.split('.');
+	  var x1 = x[0];
+	  var rgx = /(\d+)(\d{3})/;
+	  while (rgx.test(x1)) {
+	   x1 = x1.replace(rgx, '$1,$2');
+	  }
+	  return x1;
+  },
+  
+  objToArray: function(obj){
+
+	  if (!_.isUndefined(obj)) {
+		  if (parseInt(obj.totalCount) != 1) {
+			  return obj;
+		  } else {
+			  var tmpArray = [];
+			  tmpArray.push(obj.document);
+			  obj.document = tmpArray;
+			  return obj;
+		  }
+	  } else {
+		  var obj = {};
+		  obj.document = [];
+		  return obj;
+	  }
+	  
+  },
+  
+  padLeft:function(num) {
+	  var l = num.toString().length;
+	  var str = '';
+	  if(l < 8) {
+		  while(str.length < (8 - l)){
+			  str += '0';
+		  }
+		  return (str + num);
+	  }
+	  return num.toString();
+  },
+  
+  getGroups:function (){
+  	return tag.global_groups;
+  },
+  
+  getLevel2Group:function (){
+	var map = {};
+	_.each(tag.global_groups,function(item){
+		if(!_.isUndefined(item)) {
+			map[item[0]] = item[1];
+		}
+	});
+	
+	var result = [];
+	_.each(map,function(value,key){
+		result.push([key,value]);
+	});
+	
+	result = _.sortBy(result, function(item) {
+        return item[0];
+    });
+	
+	return result;
+  },
+
+  getLevel3GroupByFatherID:function (id){
+	var map = {};
+	_.each(tag.global_groups,function(item){
+		if(!_.isUndefined(item)) {
+			if(item[0] == id.toString()) {
+				map[item[2]] = item[3];
+			}
+		}
+	});
+	var result = [];
+	_.each(map,function(value,key){
+		result.push([key,value]);
+	});
+	
+	result = _.sortBy(result, function(item) {
+        return item[0];
+    });
+	
+	return result;
+  },
+
+  getLevel4GroupByFatherID:function (id){
+	var map = {};
+	_.each(tag.global_groups,function(item){
+		if(!_.isUndefined(item)) {
+			if(item[2] == id.toString()) {
+				map[item[4]] = item[5];
+			}
+		}	
+	});
+	var result = [];
+	_.each(map,function(value,key){
+		result.push([key,value]);
+	});
+	
+	result = _.sortBy(result, function(item) {
+        return item[0];
+    });
+	
+	return result;
+  },
+  
+  getLevel5GroupByFatherID:function (id){
+	var map = {};
+	_.each(tag.global_groups,function(item){
+		if(!_.isUndefined(item)) {
+			if(item[4] == id.toString()) {
+				map[item[6]] = item[7];
+			}
+		}
+	});
+	var result = [];
+	_.each(map,function(value,key){
+		result.push([key,value]);
+	});
+	
+	result = _.sortBy(result, function(item) {
+        return item[0];
+    });
+	
+	return result;
+  },
+  
+  global_groups:[]
+};
+

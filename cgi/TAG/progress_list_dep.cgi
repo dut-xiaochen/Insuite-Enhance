@@ -30,6 +30,7 @@ my $conf_file = DA::IS::get_sys_custom($session,"addon/TAG/tag_addon");
 my $groups_script = DA::Addon::TAG::TPermission::get_group($session,$conf_file);
 my $depId = $query->param("depId");
 
+
 my @include_js = ();
     push @include_js,
         qq|<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>|,
@@ -53,7 +54,7 @@ jQuery(function () {
         for (var i = 0 ; i < global_groups.length ; i++) {
             var global_group = global_groups[i];   
             if (typeof(global_group) !== "undefined") {
-                deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+                deptName.push({"name":global_group[1]+" "+global_group[3]+" "+global_group[5]+" "+global_group[7],"code":global_group[6]});
             }
         }
     } else {
@@ -61,7 +62,7 @@ jQuery(function () {
             var global_group = global_groups[i];
             if (typeof(global_group) !== "undefined") {
                 if(depIdsFromReq.indexOf(global_group[6]) !== -1){
-                    deptName.push({"name":global_group[1]+global_group[3]+global_group[5]+global_group[7],"code":global_group[6]});
+                    deptName.push({"name":global_group[1]+" "+global_group[3]+" "+global_group[5]+" "+global_group[7],"code":global_group[6]});
                 }
             }
         }
@@ -241,6 +242,8 @@ buff_end
 }
 
 sub print_head {
+my $date = getTime();  
+my $currentYear = $date->{year};
 my $head = <<buff_end;
 <html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -260,9 +263,36 @@ my $head = <<buff_end;
     .title,.title:visited {color: white}
 //--></STYLE>
 <script>
+    var currentYear = '$currentYear';
+    var lastYear = parseInt(currentYear) - 1;
+    var nextYear = parseInt(currentYear) + 1;
 </script>
 </head>
 <title>@{[t_('2015年度営業年度計画一覧（部門別）')]}</title>
 buff_end
 return ($head);
 }
+
+sub getTime {
+    my $time = shift || time();
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime($time);
+    $year += 1900;
+    $mon ++;
+    $min  = '0'.$min  if length($min)  < 2;
+    $sec  = '0'.$sec  if length($sec)  < 2;
+    $mon  = '0'.$mon  if length($mon)  < 2;
+    $mday = '0'.$mday if length($mday) < 2;
+    $hour = '0'.$hour if length($hour) < 2;
+    my $weekday = ('Sun','Mon','Tue','Wed','Thu','Fri','Sat')[$wday];
+        return { 'second' => $sec,
+                 'minute' => $min,
+                 'hour'   => $hour,
+                 'day'    => $mday,
+                 'month'  => $mon,
+                 'year'   => $year,
+                 'weekNo' => $wday,
+                 'wday'   => $weekday,
+                 'yday'   => $yday,
+                 'date'   => "$year-$mon-$mday"
+              };
+    }

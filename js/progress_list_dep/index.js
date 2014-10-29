@@ -1,6 +1,4 @@
 var deptName = [];
-var currentYear = "2014";
-var nextYear = "2015";
 
 function getDeptCode() {
     return deptName;
