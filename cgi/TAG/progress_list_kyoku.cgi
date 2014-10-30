@@ -32,6 +32,7 @@ my $groups_script = DA::Addon::TAG::TPermission::get_group($session,$conf_file);
 # エラーメッセージ
 my $conf_msg = DA::IS::get_sys_custom($session,"addon/TAG/message");
 my $err_system_msg = $conf_msg->{err_system_msg};
+my $err_progress_msg = $conf_msg->{err_progress_msg};
 	
 my $head_print = &print_head;
 
@@ -42,6 +43,7 @@ $head_print
 <script type="text/javascript">$groups_script</script>
 <script type="text/javascript">
 var err_system_msg = "$err_system_msg";
+var err_progress_msg = "$err_progress_msg";
 </script>
 <h2><span id="nextYearTitle"></span>@{[t_('営業年度計画一覧（局別）')]}</h2>
 <input type="hidden" id="list_cnt" value="10">
@@ -261,6 +263,7 @@ var currentYear = '$currentYear';
 var lastYear = parseInt(currentYear) - 1;
 var nextYear = parseInt(currentYear) + 1;
 var date = new Date().getTime();
+var lockFlg = false;
 //--></script>
 @include_js
 <title>@{[t_('営業年度計画一覧（局別）')]}</title>

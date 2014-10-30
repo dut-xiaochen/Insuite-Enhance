@@ -40,6 +40,7 @@ function render(targetDept, inline, defaultDeptCode) {
 }
 
 function renderDepList(depId, year) {
+	lockFlg = true;
     jQuery(".oddRow").remove();
     jQuery(".evenRow").remove();
     jQuery("#sumContainer").empty();
@@ -518,11 +519,16 @@ function renderSumTempl(sumObj) {
         sum_increaseProfit2_color      : sumObj.sum_increaseProfit2_color
     });
     container.append(content);
+    lockFlg = false;
 }
 
 function event() {
     // 年度プルダウンリスト変更
-    jQuery("#yearList").change(function(event) {
+    jQuery("#yearList").change(function(event) { 
+    	if(lockFlg) {
+    		alert(err_progress_msg);
+    		return;
+    	}
         var selectedYear = jQuery("#yearList option:selected").val();
         var selectedDept = jQuery("#deptList option:selected").val();
         var selectedDeptName = jQuery("#deptList option:selected").text();
@@ -533,6 +539,10 @@ function event() {
     });
 
     jQuery("#deptList").change(function(event) {
+    	if(lockFlg) {
+    		alert(err_progress_msg);
+    		return;
+    	}
         var selectedDept = jQuery("#deptList option:selected").val();
         var selectedYear = jQuery("#yearList option:selected").val();
         renderDepList(selectedDept, selectedYear);

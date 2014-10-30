@@ -26,7 +26,7 @@ function render() {
 			var tmpObj = {};
 			var strategy = tag.createStrategy(item);
 			
-			if (_.isNull(strategy["sales"]) && _.isNull(strategy["profit"]) && _.isNull(strategy["period3"])) {
+			if (tag.isNull(strategy["sales"]) && tag.isNull(strategy["profit"]) && tag.isNull(strategy["period3"])) {
 				// 売上、利益、時期が全部無い場合、表示されない
 			} else {
 				tmpObj.project = strategy["project"];
@@ -39,6 +39,11 @@ function render() {
 				allDataList.push(strategy);
 			}
 		});
+		
+		if(dataList.length == 0) {
+			// 営業一覧計画シートに遷移
+			goToPlan();
+		}
 		
 		// テンプレート生成
 		renderTmpl(dataList);
@@ -66,7 +71,6 @@ function renderTmpl(dataList) {
     		    });
     	container.append(content);
     });
-    
 }
 
 function event() {

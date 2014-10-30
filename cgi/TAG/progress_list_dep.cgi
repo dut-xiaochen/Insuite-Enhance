@@ -25,8 +25,15 @@ DA::Session::get_dir( $session, $r );
 my $query = Apache::Request->new( $r, TEMP_DIR => "$session->{temp_dir}" );
 DA::Valid::check_param_all( $session, $query );
 my $head_print = &print_head;
+
 my $conf_file = DA::IS::get_sys_custom($session,"addon/TAG/tag_addon");
 my $groups_script = DA::Addon::TAG::TPermission::get_group($session,$conf_file);
+
+# エラーメッセージ
+my $conf_msg = DA::IS::get_sys_custom($session,"addon/TAG/message");
+my $err_progress_msg = $conf_msg->{err_progress_msg};
+
+
 my $primay_group = DA::Addon::TAG::TPermission::get_primary_group($session);
 my $depId = $query->param("depId");
 
@@ -65,6 +72,7 @@ jQuery(function () {
     }
     init(defaultDeptCode);
 });
+var err_progress_msg = "$err_progress_msg";
 </script>
 
 <h2><span id="nextYearTitle"></span>@{[t_('営業年度計画一覧（部門別）')]}</h2>
@@ -80,7 +88,7 @@ jQuery(function () {
     <tr id="deptList_tr">
         <td align="right">@{[t_('　部門：')]}</td>
         <td align="left">
-            <select id = "deptList" name="">
+            <select id = "deptList" name="" style="width:300px;text-overflow:ellipsis ">
             </select>
         </td>
     </tr>
@@ -287,6 +295,7 @@ my $head = <<buff_end;
     var currentYear = '$currentYear';
     var lastYear = parseInt(currentYear) - 1;
     var nextYear = parseInt(currentYear) + 1;
+    var lockFlg = false;
 </script>
 </head>
 <title>@{[t_('2015年度営業年度計画一覧（部門別）')]}</title>

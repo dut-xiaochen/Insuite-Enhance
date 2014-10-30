@@ -46,14 +46,58 @@ sub get_params {
 	else{
 		$info = $info . "var mode = \"edit\";";	
 	}
+	
+	my $customer_name = $query->param('customer_name');
+	if($customer_name){
+		$info = $info . "var customer_name = \"$customer_name\";";	
+	}
+	else{
+		$info = $info . "var customer_name = \"\";";	
+	}
+	
+	my $record_id = $query->param('record_id');
+	if($record_id){
+		$info = $info . "var record_id = \"$record_id\";";	
+	}
+	else{
+		$info = $info . "var record_id = \"\";";	
+	}
+	
+	my $charge_group = $query->param('charge_group');
+	if($charge_group){
+		$info = $info . "var charge_group = \"$charge_group\";";
+	}
+	else{
+		$info = $info . "var charge_group = \"\";";
+	}
+	
+	my $customer_code = $query->param('customer_code');
+	if($customer_code){
+		$info = $info . "var customer_code = \"$customer_code\";";
+	}
+	else{
+		$info = $info . "var customer_code = \"\";";
+	}
+	
+	my $year = $query->param('year');
+	if($year){
+		$info = $info . "var year = \"$year\";";
+	}
+	else{
+		$info = $info . "var year = \"\";";
+	}
+	
 	$info = $info . 'var main_charger = "";';
-	$info = $info . 'var sel_user = {};';
 	return $info;
 }
 
 sub get_open_select_user_win_script {
 	my ($session,$query) = @_;
 	my $code = $query->param('strategy_code');
+	if(!$code){
+		$code = -1;
+	}
+	
 	my $f_param={};
     $f_param->{proc}="@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}";#title
     $f_param->{f_option}= $code;
@@ -71,21 +115,27 @@ sub get_open_select_user_win_script {
     my $proc_no = DA::IS::init_fav_usersel($session,$f_param);
 	my $popup_tag = DA::IS::get_fav_popup($session, $proc_no);
 	
-#	my $sc = DA::IS::get_data_parse($session,"@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}",$code);
-#warn Data::Dumper->Dump([$sc]);	
-#	DA::IS::set_data_parse($session,"plan-regist",38);
 	return $popup_tag;
 }
 
 sub get_selected_user{
 	my ($session,$query) = @_;
+	my $code = $query->param("strategy_code");
+	
+#	if($query->param("backup_tmp") == "1"){			
+#		my $sc = DA::IS::get_data_parse($session,"@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}",$code);
+#		DA::IS::set_data_parse($session,$sc,"@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}---backup",$code);
+#warn Data::Dumper->Dump(["tmp_backed_up",$sc->{USERSEL}]);
+#	}
 	
 	if($query->param("retrieve") == "1"){
 		my $code = $query->param("strategy_code");
 		unless($code){
 			$code = 1;
 		}
-		my $sc = DA::IS::get_data_parse($session,"@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}",$query->param("strategy_code"));
+		
+		my $sc = DA::IS::get_data_parse($session,"@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}",$code);
+		
 		my $user_sel = $sc->{USERSEL};
 		my $key;
 		my $result = {};
@@ -100,6 +150,9 @@ sub get_selected_user{
 		return $result;
 	}
 	else{
+#		my $sc = DA::IS::get_data_parse($session,"@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}---backup",$code);
+#		DA::IS::set_data_parse($session,$sc,"@{[t_('¥¯¥é¥¤¥¢¥ó¥È»Üºö ÅÐÏ¿')]}",$code);
+#warn Data::Dumper->Dump(["tmp_restore",$sc->{USERSEL}]);		
 		return "var sel_user = {};";
 	}
 }
@@ -168,6 +221,7 @@ my $outbuf = <<buff_end;
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/jquery/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore-1.5.1.js"></script>
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/underscore/underscore.string-2.3.2.js"></script>
+<script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/json2.js"></script>
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/common/popup.js?$prefix"></script>
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/common/tagCommon.js?$prefix"></script>
 <script type="text/javascript" src="$DA::Vars::p->{js_rdir}/custom/TAG/plan-regist/index.js?$prefix"></script>
@@ -235,13 +289,13 @@ my $outbuf = <<buff_end;
             <td id="strategy_charger">
             </td>
             <td align="right">
-                <input type="button" name="" value="@{[t_('ÁªÂò')]}" onclick="onSelectUser()">
+                <input type="button" name="" value="@{[t_('ÁªÂò')]}" onclick="onSelectUser();"/>
             </td>
         </tr>
         <tr>
             <td rowspan="2" style="text-align:right;">@{[t_('Çä¾å¸«¹þ')]}</td>
             <td>
-                <input type="text" name="strategy_sales" value="" size="10">@{[t_(' ¡ÊÀé±ß¡Ë')]}
+                <input type="text" name="strategy_sales" value="" size="10" onkeyup="checkNum(this)">@{[t_(' ¡ÊÀé±ß¡Ë')]}
             </td>
             <td align="right">
                 <input type="button" name="" value="@{[t_('ÆâÌõ')]}" onclick="detailAmount('uri_day')">
@@ -258,7 +312,7 @@ my $outbuf = <<buff_end;
         <tr>
             <td rowspan="2" style="text-align:right;">@{[t_('Íø±×¸«¹þ')]}</td>
             <td>
-                <input type="text" name="strategy_profit" value="" size="10">@{[t_(' ¡ÊÀé±ß¡Ë')]}
+                <input type="text" name="strategy_profit" value="" size="10" onkeyup="checkNum(this)">@{[t_(' ¡ÊÀé±ß¡Ë')]}
             </td>
             <td align="right">
                 <input type="button" name="" value="@{[t_('ÆâÌõ')]}" onclick="detailAmount('rieki_day')">
@@ -328,6 +382,16 @@ my $outbuf = <<buff_end;
         </tr>
     </tbody>
 </table>
+<form id="plan_regist_form" method="POST">
+<input type="hidden" name="mode">
+<input type="hidden" name="year">
+<input type="hidden" name="customer_code">
+<input type="hidden" name="customer_name">
+<input type="hidden" name="charge_group">
+<input type="hidden" name="record_id">
+<input type="hidden" name="strategy_code">
+<input type="hidden" name="backup_tmp">
+</form>
 <script language="javascript">
 	var DApopupParams = {
 		chkKey: '',

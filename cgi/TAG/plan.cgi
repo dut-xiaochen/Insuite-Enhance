@@ -175,7 +175,7 @@ my $outbuf = <<buff_end;
 <br>
 <table cellpadding="0" cellspacing="0" class="title_list">
     <tr>
-        <td width="1460" align="left"><font size="4"><b>&lt;@{[t_(' ·ÑÂ³»Üºö ')]}&gt</b></font></td>
+        <td width="1250" align="left"><font size="4"><b>&lt;@{[t_(' ·ÑÂ³»Üºö ')]}&gt</b></font></td>
         <td width="90" align="right">@{[t_('¡ÊÃ±°Ì¡§Àé±ß¡Ë')]}</td>
     </tr>
 </table>
@@ -221,7 +221,7 @@ my $outbuf = <<buff_end;
         </tr>
         <script type="text/template" id="continue_strategy_tmpl">
         	<tr id="a_line_{{id}}" class="{{odd_or_even}}" >
-            	<td id="a_sbutton_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:center;"><input type="submit" name="" value="@{[t_('ÊÔ½¸')]}" onclick="editPlan('{{strategy_code}}')"></td>
+            	<td id="a_sbutton_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:center;"><input type="submit" name="" value="@{[t_('ÊÔ½¸')]}" onclick="editPlan('{{strategy_code}}','{{record_id}}',1)"></td>
             	<td id="a_crbrand_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:left;">{{project}}</td>
             	<td id="a_meclass_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:left;">{{type}}</td>
             	<td id="a_measure_{{id}}" onmouseover="lineOver('{{id}}','a')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','a')" style="text-align:left;">{{strategy_name}}</td>
@@ -296,12 +296,12 @@ my $outbuf = <<buff_end;
         </tr>
         <script type="text/template" id="new_strategy_tmpl">
         	<tr id="b_line_{{id}}" class="{{odd_or_even}}" >
-            	<td id="b_sbutton_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:center;"><input type="submit" name="" value="@{[t_('ÊÔ½¸')]}" onclick="editPlan('{{strategy_code}}')"></td>
+            	<td id="b_sbutton_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:center;"><input type="submit" name="" value="@{[t_('ÊÔ½¸')]}" onclick="editPlan('{{strategy_code}}','{{record_id}}')"></td>
             	<td id="b_crbrand_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:left;">{{project}}</td>
             	<td id="b_meclass_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:left;">{{type}}</td>
             	<td id="b_measure_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:left;">{{strategy_name}}</td>
             	<td id="b_cradmin_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:left;">
-                	<img src="$session->{img_rdir}/custom/TAG/ico_fc_user.png" title="@{[t_('°ìÈÌ¥æ¡¼¥¶')]}" align="absmiddle" /> <a href="./ten-days_files/ten-days.htm" onclick="">{{main_charger}}</a>
+                	<img src="$session->{img_rdir}/custom/TAG/ico_fc_user.png" title="@{[t_('°ìÈÌ¥æ¡¼¥¶')]}" align="absmiddle" /> <a href="#" onclick="">{{main_charger}}</a>
             	</td>
             	<td id="b_msales2_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:right;">{{sales}}</td>
             	<td id="b_margin2_{{id}}" onmouseover="lineOver('{{id}}','b')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','b')" style="text-align:right;">{{profit}}</td>
@@ -367,12 +367,12 @@ my $outbuf = <<buff_end;
         </tr>
         <script type="text/template" id="challenge_strategy_tmpl">
         	<tr id="c_line_{{id}}" class="{{odd_or_even}}" >
-            	<td id="c_sbutton_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:center;"><input type="submit" name="" value="@{[t_('ÊÔ½¸')]}" onclick="editPlan('{{strategy_code}}')"></td>
+            	<td id="c_sbutton_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:center;"><input type="submit" name="" value="@{[t_('ÊÔ½¸')]}" onclick="editPlan('{{strategy_code}}','{{record_id}}')"></td>
             	<td id="c_crbrand_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:left;">{{project}}</td>
             	<td id="c_meclass_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:left;">{{type}}</td>
             	<td id="c_measure_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:left;">{{strategy_name}}</td>
             	<td id="c_cradmin_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:left;">
-                	<img src="$session->{img_rdir}/custom/TAG/ico_fc_user.png" title="@{[t_('°ìÈÌ¥æ¡¼¥¶')]}" align="absmiddle" /> <a href="./ten-days_files/ten-days.htm" onclick="">{{main_charger}}</a>
+                	<img src="$session->{img_rdir}/custom/TAG/ico_fc_user.png" title="@{[t_('°ìÈÌ¥æ¡¼¥¶')]}" align="absmiddle" /> <a href="#" onclick="">{{main_charger}}</a>
             	</td>
             	<td id="c_msales2_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:right;">{{sales}}</td>
             	<td id="c_margin2_{{id}}" onmouseover="lineOver('{{id}}','c')" onmouseout="lineOut('{{id}}','{{odd_or_even}}','c')" style="text-align:right;">{{profit}}</td>

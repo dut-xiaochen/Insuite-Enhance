@@ -82,7 +82,12 @@ my $outbuf = <<buff_end;
 	<div id="level5_group"></div>
 	<br/>
 	<button onclick="$popup_tag">OpenUserSelectWindow</button>
-	<button onclick="postdata();">postdata</button>
+	<br/>
+	<button onclick="postdata();">PostDataToServerTmpFile</button>
+	<br/>
+	<button onclick="postToBinder();">PostDataToBinder</button>
+	<br/>
+	<button onclick="getBinderData();">GetBinderData</button>
 	<script type=\"text/javascript\">$groups_script</script>
 	<script language="JavaScript">
 		var DApopupParams = {

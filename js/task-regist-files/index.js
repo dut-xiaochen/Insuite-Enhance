@@ -80,4 +80,11 @@ function init_data() {
 }
 
 function events() {
-	var msgList = ["閉じるボタンクリック","保存
+	var msgList = ["閉じるボタンクリック","保存ボタンクリック"];
+	jQuery("#closeBtn").click(function(e) {
+		alert(jQuery("#closeBtn").val() + msgList[0]);
+	});
+	jQuery("#saveBtn").click(function(e) {
+		alert(jQuery("#saveBtn").val() + msgList[1]);
+	});
+}

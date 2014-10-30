@@ -19,6 +19,18 @@ function detailAmount(id){
     }
 }
 
+function setCachedMainCharger(charger){
+	main_charger = charger;
+}
+
+function getCachedMainCharger(){
+	return main_charger;
+}
+
+function addSelUser(id,name){
+	sel_user[id] = name;
+}
+
 function setStrategyCode(code){
 	jQuery('#strategy_code').text(code.toString());
 }
@@ -101,27 +113,23 @@ function getStrategyProject(){
 
 function setStrategyCharger(value){
 	if(value.id){
-		main_charger = value.id;
+		setCachedMainCharger(value.id);
 		sel_user[value.id] = value.name;
 	}
 	//console.log('main_charger',value);
 }
 
-function getStrategyCharger(){
-	
-}
-
 function setStrategyOtherCharger(value){
 	//console.log('other_charger',value);
-	_.each(value,function(item){
-		sel_user[item.id] = item.name;
-	});
+	if(value){
+		if(!value.length){
+			value = [value];
+		}
+		_.each(value,function(item){
+			sel_user[item.id] = item.name;
+		});
+	}
 	createRadioFromSelUser();
-	initChargerStar();
-}
-
-function getStrategyOtherCharger(){
-
 }
 
 function setStrategySales(sales){
@@ -225,11 +233,11 @@ function getStrategyMemo(){
 }
 
 function setStrategyAccurcy(accurcy){
-	jQuery('#strategy_accurcy').val(accurcy);
+	jQuery('#strategy_accurcy').val(accurcy  + 1 );
 }
 
 function getStrategyAccurcy(){
-	return jQuery('#strategy_accurcy').val();
+	return parseInt(jQuery('#strategy_accurcy').val())- 1;
 }
 
 function setCreatedDate(date){
@@ -249,15 +257,16 @@ function getUpdatedDate(){
 }
 
 function setStrategyContent(content){
-
+	
 	if(content.totalCount > 1){
-		//multi record exist,this data is wrong  
+		alert("multi data found!");
 	}
 	
 	if(content.document){
 		content = content.document;
 	}
 	
+	setStrategyCustomerName(customer_name);
 	setCreatedDate(content.created_at);
 	setUpdatedDate(content.updated_at);
 	
@@ -288,7 +297,10 @@ function setStrategyContent(content){
 			setStrategyMemo(item.value);
 		}
 		else if(item.key == "main_charger"){
-			setStrategyCharger(item.value);
+			if(item.value){
+				setCachedMainCharger(item.value.id);
+				addSelUser(item.value.id,item.value.name);
+			}
 		}
 		else if(item.key == "other_charger"){
 			setStrategyOtherCharger(item.value);
@@ -309,7 +321,7 @@ function setStrategyContent(content){
 			setStrategyPeriod4(item.value);
 		}
 		else if(item.key == "accurcy"){
-			setStrategyAccurcy(parseInt(item.value.id) + 1);	
+			setStrategyAccurcy(parseInt(item.value.id));	
 		}
 		else if(item.key.substring(0,6) == "sales_"){
 			var month = item.key.substring(6,item.key.length);
@@ -326,14 +338,11 @@ function setStrategyContent(content){
 
 function getStrategyJSONFromView(){
 	var result = {
-		strategy_code:getStrategyCode(),
 		property:getStrategyProperty(),
 		project:getStrategyProject(),
 		type:getStrategyType(),
 		strategy_name:getStrategyName(),
-		customer_name:getStrategyCustomerName(),
 		client_key:getStrategyClientKey(),
-		main_charger:getStrategyCharger(),
 		sales:getStrategySales(),
 		profit:getStrategyProfit(),
 		period2:getStrategyPeriod2(),
@@ -344,6 +353,16 @@ function getStrategyJSONFromView(){
 		created_date:getCreatedDate(),
 		updated_date:getUpdatedDate()
 	};
+	
+	//gloabl var saved
+	result.strategy_code = strategy_code;
+	result.mode = mode;
+	result.year = year;
+	result.customer_code = customer_code;
+	result.customer_name = customer_name;
+	result.charge_group = charge_group;
+	result.record_id = record_id;
+	result.main_charger = main_charger;
 	
 	var key = "";
 	var value = "";
@@ -361,14 +380,15 @@ function getStrategyJSONFromView(){
 }
 
 function setStrategyFromJSON(data){
-	setStrategyCode(data.strategy_code);
+	if(data.strategy_code != -1){
+		setStrategyCode(strategy_code);
+	}
 	setStrategyProperty(data.property);
 	setStrategyProject(data.project);
 	setStrategyType(data.type);
 	setStrategyName(data.strategy_name);
 	setStrategyCustomerName(data.customer_name);
 	setStrategyClientKey(data.client_key);
-	setStrategyCharger(data.main_charger);
 	setStrategySales(data.sales);
 	setStrategyProfit(data.profit);
 	setStrategyPeriod2(data.period2);
@@ -392,6 +412,20 @@ function setStrategyFromJSON(data){
 	}
 	setSalesSumViewer();
 	setProfitSumViewer();
+	setCachedMainCharger( data.main_charger);
+	createRadioFromSelUser();
+	//setStrategyCharger(data.main_charger);
+	//setStrategyOtherCharger(data.other_charger);
+	
+	mode = data.mode;
+	year = data.year;
+	customer_code = data.customer_code;
+	customer_name = data.customer_name;
+	charge_group = data.charge_group;
+	record_id = data.record_id;
+	strategy_code = data.strategy_code;
+	
+	//main_charger = data.main_charger;
 }
 
 function getStrategyInfoByCode(code){
@@ -399,11 +433,26 @@ function getStrategyInfoByCode(code){
 	
 	tag.doget(url,function(err,result){
 		if(err){
+			alert("get data failed!");
 			return;
 		}
 		setStrategyContent(result);
-		testGetValue();
 	});
+}
+
+function initRegistNewStrategy(){
+	setStrategyCustomerName(customer_name);
+	
+	//strategy_code
+	//create_date
+	//update_date
+	
+	if(mode == 'new'){
+		setStrategyProperty('新規施策');	
+	}
+	else if(mode == 'challenge'){
+		setStrategyProperty('プロモート・チャレンジ施策');
+	}
 }
 
 jQuery(function(){
@@ -412,6 +461,7 @@ jQuery(function(){
 			getStrategyInfoByCode(strategy_code);
 		}
 		else{
+			initRegistNewStrategy();
 		}
 	}
 	else{
@@ -421,14 +471,13 @@ jQuery(function(){
 
 function backupInfoInServerTmpFile(){
 	var info = getStrategyJSONFromView();
-
-	tag.dopost('/cgi-bin/custom/TAG/cache-plan-regist.cgi',JSON.stringify(info),function(err,data){
+	//JSON.stringify(info)
+	tag.dopost('/cgi-bin/custom/TAG/cache-plan-regist.cgi',info,function(err,data){
 		if(err){
-			console.log('errr-post!',err);
+			//console.log('errr-post!',err);
 		}
 		else{
-
-			console.log(data);
+			//console.log(data);
 		}
 	});
 }
@@ -438,8 +487,7 @@ function retrieveInfoFromServerTmpFile(){
 		if(err){
 			return;
 		}
-		setStrategyFromJSON(data.data);
-					
+		setStrategyFromJSON(data.data);					
 	});
 }
 
@@ -449,7 +497,7 @@ function onSelectUser(){
 }
 
 function insertOrUpdateStrategy(){
-	if(tag.strategy_code == -1){
+	if(strategy_code == -1){
 		insertStrategy();
 	}
 	else{
@@ -457,24 +505,171 @@ function insertOrUpdateStrategy(){
 	}
 }
 
+function getOtherChargerString(){
+	var result = '';
+	_.each(sel_user,function(value,key){
+		if(key != main_charger){
+			result += (key + '\n');
+		}
+	});
+	if(result.length > 1){
+		result = result.substring(0,result.length - 1);
+	}
+	return result;
+}
+
+function updateAutoNumber(id,num){
+	var update_num = tag.padLeft(parseInt(num) + 1);
+	var update_url = '/hibiki/rest/1/binders/auto_number/documents/' + id;
+	tag.doput(update_url, {"auto_number":update_num}, function (err, result) {
+		if (err) {
+			alert("システムエラー発生しまいました！");
+		}
+	});
+}
+
+function getAutoNumber(callback){
+	var url = '/hibiki/rest/1/binders/auto_number/views/allData/documents?number_type=1'
+	tag.doget(url, function(err, result) {
+		if (err) {
+			alert("システムエラー発生しまいました！");
+		}
+		var cur = tag.createIncrease(result.document);
+        callback(cur.id,cur.auto_number);
+	});
+}
+
 function insertStrategy(){
 	
+	var property = "";
+	if(mode == "new"){
+		property = "2";
+	}
+	else if(mode == "challenge"){
+		property = "3";
+	}
+	else{
+		alert("システムエラー発生しまいました！");
+		return;
+	}
+	
+	var data = {
+		"customer_code":customer_code,
+		"charge_group":charge_group,
+		"strategy_code":"",
+		"year":year,
+		"property":property,
+		"project":getStrategyProject(),
+		"type":getStrategyType(),
+		"strategy_name":getStrategyName(),
+		"client_key":getStrategyClientKey(),
+		"main_charger":getCachedMainCharger(),
+		"other_charger":getOtherChargerString(),
+		"sales":getStrategySales(),
+		"profit":getStrategyProfit(),
+		"period2":getStrategyPeriod2(),
+		"period3":getStrategyPeriod3(),
+		"period4":getStrategyPeriod4(),
+		"accurcy":getStrategyAccurcy().toString(),
+		"memo":getStrategyMemo()
+	};
+	
+	var key = "";
+	var value = "";
+	for(var month = 1; month < 13; month++){
+		key = "sales_" + month.toString();
+		value = getStrategyMonthSales(month);
+		data[key] = value;
+		
+		key = "profit_" + month.toString();
+		value = getStrategyMonthProfit(month);
+		data[key] = value;
+	}
+	
+	getAutoNumber(function(id,num){
+		updateAutoNumber(id,num);
+		data["strategy_code"] = data.year + num;
+		
+		strategy_code = data["strategy_code"];
+		
+		
+		var url = '/hibiki/rest/1/binders/strategy_management/documents/';
+		tag.dopost(url,data,function(err,data){
+			if(err){
+				alert("エーラ！");
+			}
+			else{
+				alert("データが追加しました。");
+				onUpdateOrInsertOver();
+			}
+		});
+	});
 }
 
 function updateStrategy(){
+	var data = {
+		"project":getStrategyProject(),
+		"type":getStrategyType(),
+		"strategy_name":getStrategyName(),
+		"client_key":getStrategyClientKey(),
+		"main_charger":getCachedMainCharger(),
+		"other_charger":getOtherChargerString(),
+		"sales":getStrategySales(),
+		"profit":getStrategyProfit(),
+		"period2":getStrategyPeriod2(),
+		"period3":getStrategyPeriod3(),
+		"period4":getStrategyPeriod4(),
+		"accurcy":getStrategyAccurcy().toString(),
+		"memo":getStrategyMemo()
+	};
 	
+	var key = "";
+	var value = "";
+	for(var month = 1; month < 13; month++){
+		key = "sales_" + month.toString();
+		value = getStrategyMonthSales(month);
+		data[key] = value;
+		
+		key = "profit_" + month.toString();
+		value = getStrategyMonthProfit(month);
+		data[key] = value;
+	}
+	//console.log(data);
+	var url = '/hibiki/rest/1/binders/strategy_management/documents/' + record_id;
+	tag.doput(url, data ,function(err,data){
+		if(err){
+			alert("エーラ！");
+		}
+		else{
+			alert("データが更新しました。");
+			onUpdateOrInsertOver();
+		}
+	});
+}
+
+function onUpdateOrInsertOver(){
+	jQuery("#plan_regist_form").attr("action", "/cgi-bin/custom/TAG/plan-regist.cgi");
+	jQuery("input[name=mode]").val(mode);
+	jQuery("input[name=year]").val(year);
+	jQuery("input[name=customer_code]").val(customer_code);
+	jQuery("input[name=customer_name]").val(customer_name);
+	jQuery("input[name=charge_group]").val(charge_group);
+	jQuery("input[name=record_id]").val(record_id);
+	jQuery("input[name=strategy_code]").val(strategy_code);
+	jQuery("input[name=backup_tmp]").val("1");
+	jQuery("#plan_regist_form").submit();
 }
 
 function testGetValue(){
-	console.log("testGetValueStart");
-	console.log(getStrategyJSONFromView());
-	console.log("testGetValueEnd");
+	//console.log("testGetValueStart");
+	//console.log(getStrategyJSONFromView());
+	//console.log("testGetValueEnd");
 }
 
 function changeMainCharger(value){
-	jQuery('#star_' + main_charger ).html('');
+	jQuery('#star_' + getCachedMainCharger() ).html('');
 	jQuery('#star_' + value).html('<img id="star" src="/images/ja/custom/TAG/parts_hd16_053.gif" width="14" height="14" align="absmiddle" border=0>');
-	main_charger = value;
+	setCachedMainCharger(value);
 }
 
 function createRadioFromSelUser(){
@@ -484,10 +679,16 @@ function createRadioFromSelUser(){
 		html += '<a href="#" onclick="#">' + value +'</a><span id="star_' + key +'"></span><br>';
 	});
 	jQuery('#strategy_charger').html(html);
-}
-
-function initChargerStar(){
-	jQuery('input[value=' + main_charger + ']').attr('checked','true');
-	jQuery('#star_' + main_charger ).html('<img id="star" src="/images/ja/custom/TAG/parts_hd16_053.gif" width="14" height="14" align="absmiddle" border=0>');
+	
+	if(main_charger == ""){
+		return;
+	}
+	
+	if(!sel_user[main_charger]){
+		return;
+	}
+	
+	jQuery('input[value=' + getCachedMainCharger() + ']').attr('checked','true');
+	jQuery('#star_' + getCachedMainCharger() ).html('<img id="star" src="/images/ja/custom/TAG/parts_hd16_053.gif" width="14" height="14" align="absmiddle" border=0>');
 }
 

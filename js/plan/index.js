@@ -124,6 +124,7 @@ function setContinueStrategyContents(contents){
         {
             id:index,
             odd_or_even:index%2 == 1 ? "evenRow": "oddRow",
+            record_id : item.record_id,
             project: item.project,
             type: item.type,
             strategy_code:item.strategy_code,
@@ -160,6 +161,7 @@ function setNewStrategyContents(contents){
         {
             id:index,
             odd_or_even:index%2 == 1 ? "evenRow": "oddRow",
+            record_id : item.record_id,
             project: item.project,
             type: item.type,
             strategy_code:item.strategy_code,
@@ -192,6 +194,7 @@ function setChallengeStrategyContents(contents){
         {
             id:index,
             odd_or_even:index%2 == 1 ? "evenRow": "oddRow",
+            record_id : item.record_id,
             project: item.project,
             type: item.type,
             strategy_code:item.strategy_code,
@@ -215,11 +218,12 @@ function setSumOfChallengeStrategy(sum1,sum2){
 }
 
 function convertTimeFormat(year){
-	return year.substring(2,4) + '/'+ year.substring(5,7);
+	return year.substring(5,7) + '/'+ year.substring(8,10);
 }
 
 function createStrategy(doc){
 	var result = {};
+	result["record_id"] = doc.id;
 	result["create_date"] = convertTimeFormat(doc["created_at"]);
 	result["update_date"] = convertTimeFormat(doc["updated_at"]);
 	
@@ -261,10 +265,18 @@ function createStrategy(doc){
 			
 		}
 		else if(item["key"] == "sales"){
-			result["sales"] = item["value"];
+			if (tag.isNull(item["value"])) {
+				result["sales"] = 0;
+			} else {
+				result["sales"] = item["value"];
+			}
 		}
 		else if(item["key"] == "profit"){
-			result["profit"] = item["value"];
+			if (tag.isNull(item["value"])) {
+				result["profit"] = 0;
+			} else {
+				result["profit"] = item["value"];
+			}
 		}
 		else if(item["key"] == "period2"){
 			result["period2"] = item["value"];
@@ -286,6 +298,7 @@ function createStrategy(doc){
 
 function convertToContinueStrategy(strategy,pre_year_data){
 	var result = {
+		record_id : strategy.record_id,
 	    project: strategy.project,
         type: strategy.type,
         strategy_code:strategy.strategy_code,
@@ -317,6 +330,7 @@ function convertToContinueStrategy(strategy,pre_year_data){
 
 function convertToNewStrategy(strategy){
 	var result = {
+		record_id : strategy.record_id,
 	    project: strategy.project,
         type: strategy.type,
         strategy_code:strategy.strategy_code,
@@ -335,6 +349,7 @@ function convertToNewStrategy(strategy){
 
 function convertToChallengeStragegy(strategy){
 	var result = {
+		record_id : strategy.record_id,
 	    project: strategy.project,
         type: strategy.type,
         strategy_code:strategy.strategy_code,
@@ -532,9 +547,20 @@ jQuery(function(){
 });
 
 function makePlan(type){
-	window.open("/cgi-bin/custom/TAG/plan-regist.cgi?mode="+type);
+	var url = "/cgi-bin/custom/TAG/plan-regist.cgi";
+	url += ("?mode=" + type);
+	url += ("&&customer_name=" + customer_name);
+	url += ("&&customer_code=" + customer_code);
+	url += ("&&charge_group=" + dept_code);
+	url += ("&&year=" + year);
+	
+	window.open(url);
 }
 
-function editPlan(id){
-	window.open("/cgi-bin/custom/TAG/plan-regist.cgi?strategy_code="+id);
+function editPlan(id,record_id,mode){
+	var url = "/cgi-bin/custom/TAG/plan-regist.cgi?strategy_code="+id +'&&customer_name=' + customer_name + '&&record_id=' + record_id.toString();
+	if(mode){
+		url += "&&mode=edit_continue_strategy";
+	};
+	window.open(url);
 }

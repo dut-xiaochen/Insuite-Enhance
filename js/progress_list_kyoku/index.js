@@ -206,7 +206,7 @@ function renderKyoku(smallHonbuId) {
 
 // 部門データ一覧取得
 function renderDepList(kyoKuId, year) {
-	
+	lockFlg = true;
 	// クリア
 	jQuery("#sumContainer").html("");
 	jQuery("#tableContainer").html("");
@@ -424,6 +424,7 @@ function renderDepList(kyoKuId, year) {
 		sumObj.sum_increaseProfit2 = tag.addCommas(sum_increaseProfit2);
 		
 		renderSumTempl(sumObj);
+		lockFlg = false;
 		
 	});
 	
@@ -526,6 +527,10 @@ function event() {
 	
 	// 本部プルダウンリスト　Changeイベント
 	jQuery("#honBuSel").change(function(event) {
+		if (lockFlg) {
+			alert(err_progress_msg);
+			return;
+		}
 		var currentHonbuId = jQuery("#honBuSel option:selected").val();
 		// 小本部関連
 	    renderSmallHonbu(currentHonbuId);
@@ -533,6 +538,10 @@ function event() {
 	
 	// 小本部プルダウンリスト　Changeイベント
 	jQuery("#smallHonBuSel").change(function(event) {
+		if (lockFlg) {
+			alert(err_progress_msg);
+			return;
+		}
 		var currentSmallHonbuId = jQuery("#smallHonBuSel option:selected").val();
 		// 局関連
 		renderKyoku(currentSmallHonbuId);
@@ -540,6 +549,10 @@ function event() {
 	
 	// 局プルダウンリスト　Changeイベント
 	jQuery("#kyokuSel").change(function(event) {
+		if (lockFlg) {
+			alert(err_progress_msg);
+			return;
+		}
 		var currentKyokuId = jQuery("#kyokuSel option:selected").val();
 		var selectedYear = jQuery("#yearList option:selected").val();
 		// 部門関連

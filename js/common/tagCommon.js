@@ -184,10 +184,18 @@ var tag = {
 	  if (!_.isUndefined(doc)) {
 		  _.each(doc["item"],function(item){
 				if(item["key"] == "budget_sum_sales"){
-					result["budget_sum_sales"] = item["value"];
+					if (tag.isNull(item["value"])) {
+						result["budget_sum_sales"] = 0;
+					} else {
+						result["budget_sum_sales"] = item["value"];
+					};
 				}
 				else if(item["key"] == "budget_sum_profit"){
-					result["budget_sum_profit"] = item["value"];
+					if (tag.isNull(item["value"])) {
+						result["budget_sum_profit"] = 0;
+					} else {
+						result["budget_sum_profit"] = item["value"];
+					};
 				}
 				else if(item["key"] == "customer_code"){
 					result["customer_code"] = item["value"];
@@ -232,6 +240,9 @@ var tag = {
 					
 				} else if(item["key"] == "other_flag"){
 					// result["other_flag"] = item["value"];
+					
+				} else if(item["key"] == "charge_user"){
+					result["charge_user"] = item["name"];
 				}
 					
 			}); 
@@ -279,10 +290,19 @@ var tag = {
 				
 			}
 			else if(item["key"] == "sales"){
-				result["sales"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales"] = 0;
+				} else {
+					result["sales"] = item["value"];
+				}
+				
 			}
 			else if(item["key"] == "profit"){
-				result["profit"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit"] = 0;
+				} else {
+					result["profit"] = item["value"];
+				}
 			}
 			else if(item["key"] == "period2"){
 				result["period2"] = item["value"];
@@ -316,82 +336,186 @@ var tag = {
 			}
 			
 			else if(item["key"] == "sales_1"){
-				result["sales_1"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_1"] = 0;
+				} else {
+					result["sales_1"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_2"){
-				result["sales_2"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_2"] = 0;
+				} else {
+					result["sales_2"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_3"){
-				result["sales_3"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_3"] = 0;
+				} else {
+					result["sales_3"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_4"){
-				result["sales_4"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_4"] = 0;
+				} else {
+					result["sales_4"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_5"){
-				result["sales_5"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_5"] = 0;
+				} else {
+					result["sales_5"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_6"){
-				result["sales_6"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_6"] = 0;
+				} else {
+					result["sales_6"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_7"){
-				result["sales_7"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_7"] = 0;
+				} else {
+					result["sales_7"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_8"){
-				result["sales_8"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_8"] = 0;
+				} else {
+					result["sales_8"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_9"){
-				result["sales_9"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_9"] = 0;
+				} else {
+					result["sales_9"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_10"){
-				result["sales_10"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_10"] = 0;
+				} else {
+					result["sales_10"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_11"){
-				result["sales_11"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_11"] = 0;
+				} else {
+					result["sales_11"] = item["value"];
+				}
 			}
 			else if(item["key"] == "sales_12"){
-				result["sales_12"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["sales_12"] = 0;
+				} else {
+					result["sales_12"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_1"){
-				result["profit_1"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_1"] = 0;
+				} else {
+					result["profit_1"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_2"){
-				result["profit_2"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_2"] = 0;
+				} else {
+					result["profit_2"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_3"){
-				result["profit_3"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_3"] = 0;
+				} else {
+					result["profit_3"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_4"){
-				result["profit_4"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_4"] = 0;
+				} else {
+					result["profit_4"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_5"){
-				result["profit_5"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_5"] = 0;
+				} else {
+					result["profit_5"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_6"){
-				result["profit_6"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_6"] = 0;
+				} else {
+					result["profit_6"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_7"){
-				result["profit_7"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_7"] = 0;
+				} else {
+					result["profit_7"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_8"){
-				result["profit_8"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_8"] = 0;
+				} else {
+					result["profit_8"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_9"){
-				result["profit_9"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_9"] = 0;
+				} else {
+					result["profit_9"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_10"){
-				result["profit_10"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_10"] = 0;
+				} else {
+					result["profit_10"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_11"){
-				result["profit_11"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_11"] = 0;
+				} else {
+					result["profit_11"] = item["value"];
+				}
 			}
 			else if(item["key"] == "profit_12"){
-				result["profit_12"] = item["value"];
+				if (tag.isNull(item["value"])) {
+					result["profit_12"] = 0;
+				} else {
+					result["profit_12"] = item["value"];
+				}
 			}
 			
 		});
 	}
 	
 	return result;
+  },
+  
+  isNull: function(str) {
+	  if (str == null) {
+		  return true;
+	  } else if (str == "") {
+		  return true;
+	  }
   },
   
   addCommas: function(nStr){
@@ -525,3 +649,7 @@ var tag = {
 	
 	return result;
   },
+  
+  global_groups:[]
+};
+
