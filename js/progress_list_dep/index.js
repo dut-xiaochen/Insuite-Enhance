@@ -456,11 +456,12 @@ function submitForm(customCode, customName, type) {
     var form = jQuery("#form");
     if ( type === "ongoing" ) {
         if ( eval('typeof(documentsData["' + customCode + '_Data"]["lastYearSales"]) === "undefined"' ) ) {
+            jQuery("#year").val(parseInt(nextYear));
             form.attr("action", "/cgi-bin/custom/TAG/plan.cgi");
         } else {
+            jQuery("#year").val(parseInt(nextYear) -1);
             form.attr("action", "/cgi-bin/custom/TAG/ongoing_project.cgi");
         }
-        jQuery("#year").val(parseInt(nextYear) -1);
         jQuery("#depId").val(jQuery("#deptList option:selected").val());
         jQuery("#depName").val(jQuery("#deptList option:selected").text());
         jQuery("#customer_code").val(customCode);
